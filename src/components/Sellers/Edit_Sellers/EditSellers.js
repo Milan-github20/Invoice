@@ -22,13 +22,11 @@ const ModalEditSellers = (props) => {
         </div>
 
         <div className={styles.form}>
-          <h4>Seller</h4>
+          <h4>Company</h4>
           <input />
-          <h4>Customer</h4>
+          <h4>Company address</h4>
           <input />
-          <h4>Date</h4>
-          <input />
-          <h4>Amount</h4>
+          <h4>Active</h4>
           <input />
         </div>
         <div className={styles.buttons}>

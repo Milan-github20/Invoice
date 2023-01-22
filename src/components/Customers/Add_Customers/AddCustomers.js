@@ -22,13 +22,13 @@ const ModalAddCustomers = (props) => {
         </div>
 
         <div className={styles.form}>
-          <h4>Seller</h4>
-          <select />
-          <h4>Customer</h4>
-          <select />
-          <h4>Date</h4>
+          <h4>Name</h4>
           <input />
-          <h4>Amount</h4>
+          <h4>Surname</h4>
+          <input />
+          <h4>Address</h4>
+          <input />
+          <h4>Age</h4>
           <input />
         </div>
         <div className={styles.buttons}>

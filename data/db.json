@@ -1,0 +1,98 @@
+{
+  "invoices": [
+    {
+      "id": 1,
+      "sellerName": "Microsoft",
+      "customerName": "Marko Markovic",
+      "date": "10.10.2022",
+      "amount": "325.400$",
+      "sellerId": "1",
+      "customerId": "1"
+    },
+    {
+      "id": 2,
+      "sellerName": "Oracle",
+      "customerName": "Stefan Gavrilovic",
+      "date": "11.10.2022",
+      "amount": "142.800$",
+      "sellerId": "2",
+      "customerId": "2"
+    },
+    {
+      "id": 3,
+      "sellerName": "Facebook",
+      "customerName": "Nebojsa Kostic",
+      "date": "12.10.2022",
+      "amount": "511.000$",
+      "sellerId": "3",
+      "customerId": "3"
+    },
+    {
+      "id": 4,
+      "sellerName": "Amazon",
+      "customerName": "Marko Markovic",
+      "date": "10.10.2022",
+      "amount": "222.600$",
+      "sellerId": "4",
+      "customerId": "4"
+    }
+  ],
+
+  "sellers": [
+    {
+      "id": 1,
+      "companyName": "Microsoft",
+      "hqAddress": "One Microsoft Way, United States",
+      "isActive": "Active"
+    },
+    {
+      "id": 2,
+      "companyName": "Oracle",
+      "hqAddress": "2300 Oracle Way, U.S.",
+      "isActive": "No active"
+    },
+    {
+      "id": 3,
+      "companyName": "Facebook",
+      "hqAddress": "1 Hacker Way, United States",
+      "isActive": "Active"
+    },
+    {
+      "id": 4,
+      "companyName": "Amazon",
+      "hqAddress": "410 Terry Ave N, Seattle, WA.",
+      "isActive": "Active"
+    }
+  ],
+
+  "customers": [
+    {
+      "id": 1,
+      "name": "Marko",
+      "surname": "Markovic",
+      "address": "Svetog Save 7, Banja Luka",
+      "age": 26
+    },
+    {
+      "id": 2,
+      "name": "Stefan",
+      "surname": "Gavrilovic",
+      "address": "Vuka Karadzica 13a, Bijeljina",
+      "age": 22
+    },
+    {
+      "id": 3,
+      "name": "Nebojsa",
+      "surname": "Kostic",
+      "address": "Srpskih Vojvoda, Zvornik",
+      "age": 45
+    },
+    {
+      "id": 4,
+      "name": "Marko",
+      "surname": "Markovic",
+      "address": "Veljka Vlahovica, Prijedor",
+      "age": 35
+    }
+  ]
+}
