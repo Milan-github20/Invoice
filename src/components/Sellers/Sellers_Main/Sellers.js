@@ -146,7 +146,12 @@ const Sellers = () => {
             </tbody>
           )}
         </table>
-        {openSellersAdd && <AddSellers closeSellersModal={setOpenSellersAdd} />}
+        {openSellersAdd && (
+          <AddSellers
+            closeSellersModal={setOpenSellersAdd}
+            fetchSellers={fetchSellers}
+          />
+        )}
         {openSellersEdit && (
           <EditSellers closeSellersModalEdit={setOpenSellersEdit} />
         )}

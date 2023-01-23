@@ -30,9 +30,16 @@ const ModalAddCustomers = (props) => {
       });
   };
 
+  const handlekeydown = (event) => {
+    if (event.key === "enter") {
+      event.preventDefault();
+      submitAddCustomer(event);
+    }
+  };
+
   return (
     <div className={styles.modal}>
-      <form onSubmit={(e) => submitAddCustomer(e)}>
+      <form onSubmit={(e) => submitAddCustomer(e)} onKeyDown={handlekeydown}>
         <div className={styles.header}>
           <h2>Create an customer</h2>
           <img
@@ -46,13 +53,13 @@ const ModalAddCustomers = (props) => {
 
         <div className={styles.form}>
           <h4>Name</h4>
-          <input type="text" id="name" ref={nameCustomer} />
+          <input type="text" ref={nameCustomer} />
           <h4>Surname</h4>
-          <input type="text" id="surname" ref={surnameCustomer} />
+          <input type="text" ref={surnameCustomer} />
           <h4>Address</h4>
-          <input type="text" id="address" ref={addressCustomer} />
+          <input type="text" ref={addressCustomer} />
           <h4>Age</h4>
-          <input type="text" id="age" ref={ageCustomer} />
+          <input type="text" ref={ageCustomer} />
         </div>
         <div className={styles.buttons}>
           <button
@@ -63,7 +70,9 @@ const ModalAddCustomers = (props) => {
           >
             Discard
           </button>
-          <button className={styles.create}>Create</button>
+          <button className={styles.create} type="submit">
+            Create
+          </button>
         </div>
       </form>
     </div>
