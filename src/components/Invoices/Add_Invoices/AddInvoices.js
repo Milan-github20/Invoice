@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "../Add_Invoices/addInvoices.module.css";
 import ReactDOM from "react-dom";
+import { format } from "date-fns";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
@@ -27,7 +28,7 @@ const ModalAddInvoices = (props) => {
           <h4>Customer</h4>
           <select />
           <h4>Date</h4>
-          <input />
+          <input type="date" max={format(new Date(), "yyyy-MM-dd")} />
           <h4>Amount</h4>
           <input />
         </div>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
 import styles from "../Invoices_Main/invoices.module.css";
 import AddInvoices from "../Add_Invoices/AddInvoices";
 import EditInvoices from "../Edit_Invoices/EditInvoices";
+import { ClipLoader } from "react-spinners";
 
 const Invoices = () => {
   const [openInvoicesAdd, setOpenInvoicesAdd] = useState(false);
@@ -16,10 +16,17 @@ const Invoices = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [isDisabledDelete, setIsDisabledDelete] = useState(true);
 
-  const navigate = useNavigate();
+  const [loadingApp, setLoadingApp] = useState(true);
+
+  useEffect(() => {
+    setLoadingApp(true);
+    setTimeout(() => {
+      setLoadingApp(false);
+    }, 1000);
+  }, []);
 
   const fetchInvoices = () => {
-    fetch("http://localhost:8000/invoices")
+    fetch("https://63ce642b6d27349c2b6c72c5.mockapi.io/invoice")
       .then((res) => res.json())
       .then(
         (result) => {
@@ -97,33 +104,40 @@ const Invoices = () => {
               <th>Amount</th>
             </tr>
           </thead>
-          <tbody className={styles.tbody}>
-            {invoices.map((item) => {
-              return (
-                <tr
-                  key={item.id}
-                  onClick={() => {
-                    if (selectedIds.includes(item.id)) {
-                      setSelectedIds(
-                        selectedIds.filter((id) => id !== item.id)
-                      );
-                    } else {
-                      setSelectedIds([...selectedIds, item.id]);
+          {loadingApp ? (
+            <ClipLoader
+              color={"#289944"}
+              loading={loadingApp}
+              cssOverride={{ position: "absolute", top: "40%", left: "51.5%" }}
+            />
+          ) : (
+            <tbody className={styles.tbody}>
+              {invoices.map((item) => {
+                return (
+                  <tr
+                    key={item.id}
+                    onClick={() => {
+                      if (selectedIds.includes(item.id)) {
+                        setSelectedIds(
+                          selectedIds.filter((id) => id !== item.id)
+                        );
+                      } else {
+                        setSelectedIds([...selectedIds, item.id]);
+                      }
+                    }}
+                    className={
+                      selectedIds.includes(item.id) ? styles.selectedRow : ""
                     }
-                    // navigate(`/invoices/${item.id}`);
-                  }}
-                  className={
-                    selectedIds.includes(item.id) ? styles.selectedRow : ""
-                  }
-                >
-                  <td>{item.sellerName}</td>
-                  <td>{item.customerName}</td>
-                  <td>{item.date}</td>
-                  <td>{item.amount}</td>
-                </tr>
-              );
-            })}
-          </tbody>
+                  >
+                    <td>{item.sellerName}</td>
+                    <td>{item.customerName}</td>
+                    <td>{item.date}</td>
+                    <td>{item.amount}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          )}
         </table>
         {openInvoicesAdd && (
           <AddInvoices closeInvoicesModal={setOpenInvoicesAdd} />

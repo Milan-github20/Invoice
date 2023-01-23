@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../Customers_Main/customers.module.css";
 import AddCustomers from "../Add_Customers/AddCustomers";
 import EditCustomers from "../Edit_Customers/EditCustomers";
+import { ClipLoader } from "react-spinners";
 
 const Customers = () => {
   const [openCustomersAdd, setOpenCustomersAdd] = useState(false);
@@ -14,6 +15,15 @@ const Customers = () => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isDisabledDelete, setIsDisabledDelete] = useState(true);
+
+  const [loadingApp, setLoadingApp] = useState(true);
+
+  useEffect(() => {
+    setLoadingApp(true);
+    setTimeout(() => {
+      setLoadingApp(false);
+    }, 1000);
+  }, []);
 
   useEffect(() => {
     if (selectedIds.length === 0) {
@@ -28,12 +38,13 @@ const Customers = () => {
   }, [selectedIds]);
 
   const fetchCustomers = () => {
-    fetch("http://localhost:8000/customers")
+    fetch("https://63ce642b6d27349c2b6c72c5.mockapi.io/customers")
       .then((res) => res.json())
       .then(
         (result) => {
           setCustomers(result);
           setIsLoaded(true);
+          setSelectedIds([]);
         },
         (error) => {
           setError(error);
@@ -45,6 +56,25 @@ const Customers = () => {
   useEffect(() => {
     fetchCustomers();
   }, []);
+
+  const deleteRowCustomers = (e) => {
+    //e.preventDefault();
+
+    if (window.confirm("Are u sure?")) {
+      if (selectedIds.length >= 1) {
+        for (let i = 0; i < selectedIds.length; i++) {
+          fetch(
+            `https://63ce642b6d27349c2b6c72c5.mockapi.io/customers/${selectedIds[i]}`,
+            {
+              method: "DELETE",
+            }
+          );
+        }
+        alert("asdasdasd");
+        fetchCustomers();
+      }
+    }
+  };
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -79,6 +109,9 @@ const Customers = () => {
                 className={`${styles.delete} ${
                   isDisabledDelete ? styles.disabled : ""
                 }`}
+                onClick={(e) => {
+                  deleteRowCustomers(customers.id, e);
+                }}
               >
                 <img src="./assets/close.png" alt="" />
               </div>
@@ -94,35 +127,46 @@ const Customers = () => {
               <th>Age</th>
             </tr>
           </thead>
-          <tbody className={styles.tbody}>
-            {customers.map((item) => {
-              return (
-                <tr
-                  key={item.id}
-                  onClick={() => {
-                    if (selectedIds.includes(item.id)) {
-                      setSelectedIds(
-                        selectedIds.filter((id) => id !== item.id)
-                      );
-                    } else {
-                      setSelectedIds([...selectedIds, item.id]);
+          {loadingApp ? (
+            <ClipLoader
+              color={"#289944"}
+              loading={loadingApp}
+              cssOverride={{ position: "absolute", top: "40%", left: "51.5%" }}
+            />
+          ) : (
+            <tbody className={styles.tbody}>
+              {customers.map((item) => {
+                return (
+                  <tr
+                    key={item.id}
+                    onClick={() => {
+                      if (selectedIds.includes(item.id)) {
+                        setSelectedIds(
+                          selectedIds.filter((id) => id !== item.id)
+                        );
+                      } else {
+                        setSelectedIds([...selectedIds, item.id]);
+                      }
+                    }}
+                    className={
+                      selectedIds.includes(item.id) ? styles.selectedRow : ""
                     }
-                  }}
-                  className={
-                    selectedIds.includes(item.id) ? styles.selectedRow : ""
-                  }
-                >
-                  <td>{item.name}</td>
-                  <td>{item.surname}</td>
-                  <td>{item.address}</td>
-                  <td>{item.age}</td>
-                </tr>
-              );
-            })}
-          </tbody>
+                  >
+                    <td>{item.name}</td>
+                    <td>{item.surname}</td>
+                    <td>{item.address}</td>
+                    <td>{item.age}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          )}
         </table>
         {openCustomersAdd && (
-          <AddCustomers closeCustomersModal={setOpenCustomersAdd} />
+          <AddCustomers
+            closeCustomersModal={setOpenCustomersAdd}
+            fetchCustomers={fetchCustomers}
+          />
         )}
         {openCustomersEdit && (
           <EditCustomers closeCustomersModalEdit={setOpenCustomersEdit} />

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../Sellers_Main/sellers.module.css";
 import AddSellers from "../Add_Sellers/AddSellers";
 import EditSellers from "../Edit_Sellers/EditSellers";
+import { ClipLoader } from "react-spinners";
 
 const Sellers = () => {
   const [openSellersAdd, setOpenSellersAdd] = useState(false);
@@ -15,6 +16,15 @@ const Sellers = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [isDisabledDelete, setIsDisabledDelete] = useState(true);
 
+  const [loadingApp, setLoadingApp] = useState(true);
+
+  useEffect(() => {
+    setLoadingApp(true);
+    setTimeout(() => {
+      setLoadingApp(false);
+    }, 1000);
+  }, []);
+
   useEffect(() => {
     if (selectedIds.length === 0) {
       setIsDisabled(selectedIds.length === 0);
@@ -27,20 +37,8 @@ const Sellers = () => {
     }
   }, [selectedIds]);
 
-  useEffect(() => {
-    if (isLoaded) {
-      sellers.map((item) => {
-        if (item.isActive === "Active") {
-          document.getElementById(item.id).classList.add(styles.activeGreen);
-        } else {
-          document.getElementById(item.id).classList.add(styles.activeRed);
-        }
-      });
-    }
-  }, [isLoaded]);
-
   const fetchSellers = () => {
-    fetch("http://localhost:8000/sellers")
+    fetch("https://63ce9ae9fdfe2764c726a809.mockapi.io/sellers")
       .then((res) => res.json())
       .then(
         (result) => {
@@ -105,31 +103,48 @@ const Sellers = () => {
               <th>Active</th>
             </tr>
           </thead>
-          <tbody className={styles.tbody}>
-            {sellers.map((item) => {
-              return (
-                <tr
-                  key={item.id}
-                  onClick={() => {
-                    if (selectedIds.includes(item.id)) {
-                      setSelectedIds(
-                        selectedIds.filter((id) => id !== item.id)
-                      );
-                    } else {
-                      setSelectedIds([...selectedIds, item.id]);
+          {loadingApp ? (
+            <ClipLoader
+              color={"#289944"}
+              loading={loadingApp}
+              cssOverride={{ position: "absolute", top: "40%", left: "51.5%" }}
+            />
+          ) : (
+            <tbody className={styles.tbody}>
+              {sellers.map((item) => {
+                return (
+                  <tr
+                    key={item.id}
+                    onClick={() => {
+                      if (selectedIds.includes(item.id)) {
+                        setSelectedIds(
+                          selectedIds.filter((id) => id !== item.id)
+                        );
+                      } else {
+                        setSelectedIds([...selectedIds, item.id]);
+                      }
+                    }}
+                    className={
+                      selectedIds.includes(item.id) ? styles.selectedRow : ""
                     }
-                  }}
-                  className={
-                    selectedIds.includes(item.id) ? styles.selectedRow : ""
-                  }
-                >
-                  <td>{item.companyName}</td>
-                  <td>{item.hqAddress}</td>
-                  <td id={item.id}>{item.isActive}</td>
-                </tr>
-              );
-            })}
-          </tbody>
+                  >
+                    <td>{item.companyName}</td>
+                    <td>{item.hqAddress}</td>
+                    <td
+                      className={`${
+                        item.isActive === "Active"
+                          ? styles.activeGreen
+                          : styles.activeRed
+                      }`}
+                      id={item.id}
+                    >
+                      {item.isActive}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          )}
         </table>
         {openSellersAdd && <AddSellers closeSellersModal={setOpenSellersAdd} />}
         {openSellersEdit && (
