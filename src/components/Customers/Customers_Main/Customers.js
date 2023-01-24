@@ -11,8 +11,8 @@ const Customers = () => {
   const [customers, setCustomers] = useState([]);
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-
   const [selectedIds, setSelectedIds] = useState([]);
+
   const [isDisabled, setIsDisabled] = useState(true);
   const [isDisabledDelete, setIsDisabledDelete] = useState(true);
 

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import styles from "../Edit_Sellers/editSellers.module.css";
 import ReactDOM from "react-dom";
 import axios from "axios";
@@ -8,9 +8,11 @@ const BackDrop = () => {
 };
 
 const ModalEditSellers = (props) => {
-  const companyNameRefSellers = useRef();
-  const hqAddressRefSellers = useRef();
-  const isActiveRefSellers = useRef();
+  const [company, setCompany] = useState(props.editSellersData.companyName);
+  const [companyAddress, setCompanyAddress] = useState(
+    props.editSellersData.hqAddress
+  );
+  const [active, setActive] = useState(props.editSellersData.isActive);
 
   const submitEditSellers = (e) => {
     e.preventDefault();
@@ -19,9 +21,9 @@ const ModalEditSellers = (props) => {
       .put(
         `https://63ce9ae9fdfe2764c726a809.mockapi.io/sellers/${props.editSellersData.id}`,
         {
-          companyName: companyNameRefSellers.current.value,
-          hqAddress: hqAddressRefSellers.current.value,
-          isActive: isActiveRefSellers.current.value,
+          companyName: company,
+          hqAddress: companyAddress,
+          isActive: active,
         }
       )
       .then(
@@ -55,21 +57,21 @@ const ModalEditSellers = (props) => {
         <div className={styles.form}>
           <h4>Company</h4>
           <input
-            ref={companyNameRefSellers}
-            defaultValue={props.editSellersData.companyName}
+            onChange={(e) => setCompany(e.target.value)}
+            defaultValue={company}
           />
           <h4>Company address</h4>
           <input
-            ref={hqAddressRefSellers}
-            defaultValue={props.editSellersData.hqAddress}
+            onChange={(e) => setCompanyAddress(e.target.value)}
+            defaultValue={companyAddress}
           />
           <h4>Active</h4>
           <select
-            ref={isActiveRefSellers}
-            defaultValue={props.editSellersData.isActive}
+            onChange={(e) => setActive(e.target.value)}
+            defaultValue={active}
           >
             <option>Active</option>
-            <option>No Active</option>
+            <option>No active</option>
           </select>
         </div>
         <div className={styles.buttons}>
@@ -100,6 +102,8 @@ const EditSellers = (props) => {
           closeSellersModalEdit={props.closeSellersModalEdit}
           editSellersData={props.editSellersData}
           fetchSellers={props.fetchSellers}
+          selectedIds={props.selectedIds}
+          isDisabled={props.isDisabled}
         ></ModalEditSellers>,
         document.getElementById("modal")
       )}

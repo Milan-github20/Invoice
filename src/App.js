@@ -11,7 +11,6 @@ function App() {
       <Header />
       <Routes>
         <Route path="/invoices" element={<Invoices />} />
-
         <Route path="/sellers" element={<Sellers />} />
         <Route path="/customers" element={<Customers />} />
       </Routes>

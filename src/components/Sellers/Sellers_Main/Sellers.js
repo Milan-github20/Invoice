@@ -46,6 +46,7 @@ const Sellers = () => {
         (result) => {
           setSellers(result);
           setIsLoaded(true);
+          setSelectedIds("");
         },
         (error) => {
           setError(error);
