@@ -18,10 +18,7 @@ const Customers = () => {
 
   const [loadingApp, setLoadingApp] = useState(true);
 
-  const [editCustomers, setEditCustomers] = useState([]);
-  const [isEditingCustomers, setIsEditingCustomers] = useState(false);
-
-  console.log(editCustomers);
+  const [editCustomersData, setEditCustomersData] = useState([]);
 
   const fetchCustomers = () => {
     fetch("https://63ce642b6d27349c2b6c72c5.mockapi.io/customers")
@@ -37,19 +34,6 @@ const Customers = () => {
           setIsLoaded(true);
         }
       );
-  };
-
-  const editCustomer = (name, surname, address, age, id) => {
-    const data = {
-      name: name,
-      surname: surname,
-      address: address,
-      age: age,
-      id: id,
-    };
-
-    setEditCustomers(data);
-    setIsEditingCustomers(true);
   };
 
   useEffect(() => {
@@ -75,7 +59,7 @@ const Customers = () => {
     fetchCustomers();
   }, []);
 
-  const deleteRowCustomers = (e) => {
+  const deleteRowCustomers = () => {
     if (window.confirm("Are u sure?")) {
       if (selectedIds.length >= 1) {
         for (let i = 0; i < selectedIds.length; i++) {
@@ -116,14 +100,6 @@ const Customers = () => {
                   isDisabled ? styles.disabled : ""
                 }`}
                 onClick={() => {
-                  editCustomer(
-                    customers.name,
-                    customers.surname,
-                    customers.address,
-                    customers.age,
-                    customers.id
-                  );
-                  // console.log();
                   setOpenCustomersEdit(true);
                 }}
               >
@@ -164,12 +140,12 @@ const Customers = () => {
                   <tr
                     key={item.id}
                     onClick={() => {
-                      console.log(customers);
                       if (selectedIds.includes(item.id)) {
                         setSelectedIds(
                           selectedIds.filter((id) => id !== item.id)
                         );
                       } else {
+                        setEditCustomersData(item);
                         setSelectedIds([...selectedIds, item.id]);
                       }
                     }}
@@ -193,10 +169,10 @@ const Customers = () => {
             fetchCustomers={fetchCustomers}
           />
         )}
-        {openCustomersEdit && isEditingCustomers && (
+        {openCustomersEdit && (
           <EditCustomers
+            editCustomersData={editCustomersData}
             closeCustomersModalEdit={setOpenCustomersEdit}
-            editCustomers={editCustomers}
             fetchCustomers={fetchCustomers}
           />
         )}

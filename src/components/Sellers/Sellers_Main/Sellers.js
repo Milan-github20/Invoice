@@ -18,6 +18,8 @@ const Sellers = () => {
 
   const [loadingApp, setLoadingApp] = useState(true);
 
+  const [editSellersData, setSellersData] = useState([]);
+
   useEffect(() => {
     setLoadingApp(true);
     setTimeout(() => {
@@ -56,6 +58,24 @@ const Sellers = () => {
     fetchSellers();
   }, []);
 
+  const deleteRowSellers = (e) => {
+    if (window.confirm("Are u sure?")) {
+      if (selectedIds.length >= 1) {
+        for (let i = 0; i < selectedIds.length; i++) {
+          fetch(
+            `https://63ce9ae9fdfe2764c726a809.mockapi.io/sellers/${selectedIds[i]}`,
+            {
+              method: "DELETE",
+            }
+          );
+        }
+        alert("asdasdasd");
+        fetchSellers();
+        setSelectedIds("");
+      }
+    }
+  };
+
   if (error) {
     return <div>Error: {error.message}</div>;
   } else if (!isLoaded) {
@@ -89,6 +109,7 @@ const Sellers = () => {
                 className={`${styles.delete} ${
                   isDisabledDelete ? styles.disabled : ""
                 }`}
+                onClick={(e) => deleteRowSellers(sellers.id, e)}
               >
                 <img src="./assets/close.png" alt="" />
               </div>
@@ -121,6 +142,7 @@ const Sellers = () => {
                           selectedIds.filter((id) => id !== item.id)
                         );
                       } else {
+                        setSellersData(item);
                         setSelectedIds([...selectedIds, item.id]);
                       }
                     }}
@@ -153,7 +175,11 @@ const Sellers = () => {
           />
         )}
         {openSellersEdit && (
-          <EditSellers closeSellersModalEdit={setOpenSellersEdit} />
+          <EditSellers
+            closeSellersModalEdit={setOpenSellersEdit}
+            editSellersData={editSellersData}
+            fetchSellers={fetchSellers}
+          />
         )}
       </div>
     );

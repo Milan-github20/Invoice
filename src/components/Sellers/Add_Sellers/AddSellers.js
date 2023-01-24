@@ -16,21 +16,28 @@ const ModalAddSellers = (props) => {
     e.preventDefault();
 
     axios
-      .post("https://63ce642b6d27349c2b6c72c5.mockapi.io/sellers", {
+      .post("https://63ce9ae9fdfe2764c726a809.mockapi.io/sellers", {
         companyName: companyNameRefSellers.current.value,
         hqAddress: hqAddressRefSellers.current.value,
         isActive: isActiveRefSellers.current.value,
       })
       .then(() => {
         alert("DA");
-        props.fetchSellers();
         props.closeSellersModal(false);
+        props.fetchSellers();
       });
+  };
+
+  const handlekeydown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitAddSellers(event);
+    }
   };
 
   return (
     <div className={styles.modal}>
-      <form onSubmit={(e) => submitAddSellers(e)}>
+      <form onSubmit={(e) => submitAddSellers(e)} onKeyDown={handlekeydown}>
         <div className={styles.header}>
           <h2>Create an seller</h2>
           <img
@@ -49,8 +56,7 @@ const ModalAddSellers = (props) => {
           <input ref={hqAddressRefSellers} />
           <h4>Active</h4>
           <select ref={isActiveRefSellers}>
-            <option>Active</option>
-            <option>No Active</option>
+            <option>Active</option>;<option>No active</option>;
           </select>
         </div>
         <div className={styles.buttons}>

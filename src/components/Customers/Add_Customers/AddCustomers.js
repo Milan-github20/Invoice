@@ -31,7 +31,7 @@ const ModalAddCustomers = (props) => {
   };
 
   const handlekeydown = (event) => {
-    if (event.key === "enter") {
+    if (event.key === "Enter") {
       event.preventDefault();
       submitAddCustomer(event);
     }
@@ -59,7 +59,7 @@ const ModalAddCustomers = (props) => {
           <h4>Address</h4>
           <input type="text" ref={addressCustomer} />
           <h4>Age</h4>
-          <input type="text" ref={ageCustomer} />
+          <input type="number" ref={ageCustomer} />
         </div>
         <div className={styles.buttons}>
           <button
