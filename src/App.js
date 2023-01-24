@@ -54,7 +54,10 @@ function App() {
     <div className="appDiv">
       <Header />
       <Routes>
-        <Route path="/invoices" element={<Invoices />} />
+        <Route
+          path="/invoices"
+          element={<Invoices sellers={sellers} customers={customers} />}
+        />
         <Route
           path="/sellers"
           element={

@@ -70,6 +70,13 @@
   border-radius: 5px;
 }
 
+.form select {
+  width: 100%;
+  height: 40px;
+  border: 2px solid #cdcdcd;
+  border-radius: 5px;
+}
+
 .buttons {
   display: flex;
   justify-content: space-around;

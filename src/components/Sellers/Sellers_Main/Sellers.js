@@ -47,7 +47,6 @@ const Sellers = (props) => {
         }
         alert("asdasdasd");
         props.fetchSellers();
-        props.setSelectedIds("");
       }
     }
   };

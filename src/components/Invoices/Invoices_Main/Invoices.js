@@ -4,7 +4,7 @@ import AddInvoices from "../Add_Invoices/AddInvoices";
 import EditInvoices from "../Edit_Invoices/EditInvoices";
 import { ClipLoader } from "react-spinners";
 
-const Invoices = () => {
+const Invoices = (props) => {
   const [openInvoicesAdd, setOpenInvoicesAdd] = useState(false);
   const [openInvoicesEdit, setOpenInvoicesEdit] = useState(false);
 
@@ -15,6 +15,8 @@ const Invoices = () => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isDisabledDelete, setIsDisabledDelete] = useState(true);
+
+  const [editInvoicesData, setInvoicesData] = useState([]);
 
   const [loadingApp, setLoadingApp] = useState(true);
 
@@ -32,6 +34,7 @@ const Invoices = () => {
         (result) => {
           setInvoices(result);
           setIsLoaded(true);
+          setSelectedIds([]);
         },
         (error) => {
           setError(error);
@@ -39,6 +42,10 @@ const Invoices = () => {
         }
       );
   };
+
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
 
   useEffect(() => {
     if (selectedIds.length === 0) {
@@ -52,9 +59,22 @@ const Invoices = () => {
     }
   }, [selectedIds]);
 
-  useEffect(() => {
-    fetchInvoices();
-  }, []);
+  const deleteRowInvoices = () => {
+    if (window.confirm("Are u sure?")) {
+      if (selectedIds.length >= 1) {
+        for (let i = 0; i < selectedIds.length; i++) {
+          fetch(
+            `https://63ce642b6d27349c2b6c72c5.mockapi.io/invoice/${selectedIds[i]}`,
+            {
+              method: "DELETE",
+            }
+          );
+        }
+        alert("asdasdasd");
+        fetchInvoices();
+      }
+    }
+  };
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -89,6 +109,9 @@ const Invoices = () => {
                 className={`${styles.delete} ${
                   isDisabledDelete ? styles.disabled : ""
                 }`}
+                onClick={(e) => {
+                  deleteRowInvoices(invoices.id, e);
+                }}
               >
                 <img src="./assets/close.png" alt="" />
               </div>
@@ -122,6 +145,7 @@ const Invoices = () => {
                           selectedIds.filter((id) => id !== item.id)
                         );
                       } else {
+                        setInvoicesData(item);
                         setSelectedIds([...selectedIds, item.id]);
                       }
                     }}
@@ -132,7 +156,14 @@ const Invoices = () => {
                     <td>{item.sellerName}</td>
                     <td>{item.customerName}</td>
                     <td>{item.date}</td>
-                    <td>{item.amount}</td>
+                    <td>
+                      {/* {item.amount}$ */}
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                        maximumFractionDigits: 0,
+                      }).format(item.amount)}
+                    </td>
                   </tr>
                 );
               })}
@@ -140,10 +171,21 @@ const Invoices = () => {
           )}
         </table>
         {openInvoicesAdd && (
-          <AddInvoices closeInvoicesModal={setOpenInvoicesAdd} />
+          <AddInvoices
+            closeInvoicesModal={setOpenInvoicesAdd}
+            sellers={props.sellers}
+            customers={props.customers}
+            fetchInvoices={fetchInvoices}
+          />
         )}
         {openInvoicesEdit && (
-          <EditInvoices closeInvoicesModalEdit={setOpenInvoicesEdit} />
+          <EditInvoices
+            closeInvoicesModalEdit={setOpenInvoicesEdit}
+            editInvoicesData={editInvoicesData}
+            fetchInvoices={fetchInvoices}
+            sellers={props.sellers}
+            customers={props.customers}
+          />
         )}
       </div>
     );
