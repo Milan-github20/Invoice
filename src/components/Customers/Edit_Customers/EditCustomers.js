@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import styles from "../Edit_Customers/editCustomers.module.css";
 import ReactDOM from "react-dom";
 import axios from "axios";
@@ -8,10 +8,10 @@ const BackDrop = () => {
 };
 
 const ModalEditCustomers = (props) => {
-  const nameRefEditCustomers = useRef();
-  const surnameRefEditCustomers = useRef();
-  const addressRefEditCustomers = useRef();
-  const ageRefEditCustomers = useRef();
+  const [name, setName] = useState(props.editCustomersData.name);
+  const [surname, setSurname] = useState(props.editCustomersData.surname);
+  const [address, setAddress] = useState(props.editCustomersData.address);
+  const [age, setAge] = useState(props.editCustomersData.age);
 
   const submitEditCustomers = (e) => {
     e.preventDefault();
@@ -20,10 +20,10 @@ const ModalEditCustomers = (props) => {
       .put(
         `https://63ce642b6d27349c2b6c72c5.mockapi.io/customers/${props.editCustomersData.id}`,
         {
-          name: nameRefEditCustomers.current.value,
-          surname: surnameRefEditCustomers.current.value,
-          address: addressRefEditCustomers.current.value,
-          age: ageRefEditCustomers.current.value,
+          name: name,
+          surname: surname,
+          address: address,
+          age: age,
         }
       )
       .then(
@@ -58,26 +58,26 @@ const ModalEditCustomers = (props) => {
           <h4>Name</h4>
           <input
             type="text"
-            ref={nameRefEditCustomers}
-            defaultValue={props.editCustomersData.name}
+            onChange={(e) => setName(e.target.value)}
+            defaultValue={name}
           />
           <h4>Surname</h4>
           <input
             type="text"
-            ref={surnameRefEditCustomers}
-            defaultValue={props.editCustomersData.surname}
+            onChange={(e) => setSurname(e.target.value)}
+            defaultValue={surname}
           />
           <h4>Address</h4>
           <input
             type="text"
-            ref={addressRefEditCustomers}
-            defaultValue={props.editCustomersData.address}
+            onChange={(e) => setAddress(e.target.value)}
+            defaultValue={address}
           />
           <h4>Age</h4>
           <input
             type="number"
-            ref={ageRefEditCustomers}
-            defaultValue={props.editCustomersData.age}
+            onChange={(e) => setAge(e.target.value)}
+            defaultValue={age}
           />
         </div>
         <div className={styles.buttons}>

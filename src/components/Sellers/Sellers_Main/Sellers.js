@@ -4,15 +4,10 @@ import AddSellers from "../Add_Sellers/AddSellers";
 import EditSellers from "../Edit_Sellers/EditSellers";
 import { ClipLoader } from "react-spinners";
 
-const Sellers = () => {
+const Sellers = (props) => {
   const [openSellersAdd, setOpenSellersAdd] = useState(false);
   const [openSellersEdit, setOpenSellersEdit] = useState(false);
 
-  const [sellers, setSellers] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  const [selectedIds, setSelectedIds] = useState([]);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isDisabledDelete, setIsDisabledDelete] = useState(true);
 
@@ -28,58 +23,38 @@ const Sellers = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedIds.length === 0) {
-      setIsDisabled(selectedIds.length === 0);
-      setIsDisabledDelete(selectedIds.length === 0);
-    } else if (selectedIds.length === 1) {
-      setIsDisabled(selectedIds.length <= 0);
-      setIsDisabledDelete(selectedIds.length <= 0);
-    } else if (selectedIds.length === 2) {
-      setIsDisabled(selectedIds.length !== 1);
+    if (props.selectedIds.length === 0) {
+      setIsDisabled(props.selectedIds.length === 0);
+      setIsDisabledDelete(props.selectedIds.length === 0);
+    } else if (props.selectedIds.length === 1) {
+      setIsDisabled(props.selectedIds.length <= 0);
+      setIsDisabledDelete(props.selectedIds.length <= 0);
+    } else if (props.selectedIds.length === 2) {
+      setIsDisabled(props.selectedIds.length !== 1);
     }
-  }, [selectedIds]);
+  }, [props.selectedIds]);
 
-  const fetchSellers = () => {
-    fetch("https://63ce9ae9fdfe2764c726a809.mockapi.io/sellers")
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setSellers(result);
-          setIsLoaded(true);
-          setSelectedIds("");
-        },
-        (error) => {
-          setError(error);
-          setIsLoaded(true);
-        }
-      );
-  };
-
-  useEffect(() => {
-    fetchSellers();
-  }, []);
-
-  const deleteRowSellers = (e) => {
+  const deleteRowSellers = () => {
     if (window.confirm("Are u sure?")) {
-      if (selectedIds.length >= 1) {
-        for (let i = 0; i < selectedIds.length; i++) {
+      if (props.selectedIds.length >= 1) {
+        for (let i = 0; i < props.selectedIds.length; i++) {
           fetch(
-            `https://63ce9ae9fdfe2764c726a809.mockapi.io/sellers/${selectedIds[i]}`,
+            `https://63ce9ae9fdfe2764c726a809.mockapi.io/sellers/${props.selectedIds[i]}`,
             {
               method: "DELETE",
             }
           );
         }
         alert("asdasdasd");
-        fetchSellers();
-        setSelectedIds("");
+        props.fetchSellers();
+        props.setSelectedIds("");
       }
     }
   };
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  } else if (!isLoaded) {
+  if (props.error) {
+    return <div>Error: {props.error.message}</div>;
+  } else if (!props.isLoaded) {
     return;
   } else {
     return (
@@ -110,7 +85,7 @@ const Sellers = () => {
                 className={`${styles.delete} ${
                   isDisabledDelete ? styles.disabled : ""
                 }`}
-                onClick={(e) => deleteRowSellers(sellers.id, e)}
+                onClick={(e) => deleteRowSellers(props.sellers.id, e)}
               >
                 <img src="./assets/close.png" alt="" />
               </div>
@@ -133,22 +108,24 @@ const Sellers = () => {
             />
           ) : (
             <tbody className={styles.tbody}>
-              {sellers.map((item) => {
+              {props.sellers.map((item) => {
                 return (
                   <tr
                     key={item.id}
                     onClick={() => {
-                      if (selectedIds.includes(item.id)) {
-                        setSelectedIds(
-                          selectedIds.filter((id) => id !== item.id)
+                      if (props.selectedIds.includes(item.id)) {
+                        props.setSelectedIds(
+                          props.selectedIds.filter((id) => id !== item.id)
                         );
                       } else {
                         setSellersData(item);
-                        setSelectedIds([...selectedIds, item.id]);
+                        props.setSelectedIds([...props.selectedIds, item.id]);
                       }
                     }}
                     className={
-                      selectedIds.includes(item.id) ? styles.selectedRow : ""
+                      props.selectedIds.includes(item.id)
+                        ? styles.selectedRow
+                        : ""
                     }
                   >
                     <td>{item.companyName}</td>
@@ -172,14 +149,14 @@ const Sellers = () => {
         {openSellersAdd && (
           <AddSellers
             closeSellersModal={setOpenSellersAdd}
-            fetchSellers={fetchSellers}
+            fetchSellers={props.fetchSellers}
           />
         )}
         {openSellersEdit && (
           <EditSellers
             closeSellersModalEdit={setOpenSellersEdit}
             editSellersData={editSellersData}
-            fetchSellers={fetchSellers}
+            fetchSellers={props.fetchSellers}
           />
         )}
       </div>
