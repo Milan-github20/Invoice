@@ -3,17 +3,19 @@ import styles from "../Sellers_Main/sellers.module.css";
 import AddSellers from "../Add_Sellers/AddSellers";
 import EditSellers from "../Edit_Sellers/EditSellers";
 import { ClipLoader } from "react-spinners";
+import DeleteSellers from "../DeleteSellers/DeleteSellers";
 
 const Sellers = (props) => {
   const [openSellersAdd, setOpenSellersAdd] = useState(false);
   const [openSellersEdit, setOpenSellersEdit] = useState(false);
+  const [openDeleteSeller, setOpenDeleteSeller] = useState(false);
 
   const [isDisabled, setIsDisabled] = useState(true);
   const [isDisabledDelete, setIsDisabledDelete] = useState(true);
 
   const [loadingApp, setLoadingApp] = useState(true);
 
-  const [editSellersData, setSellersData] = useState([]);
+  const [editSellersData, setEditSellersData] = useState([]);
 
   useEffect(() => {
     setLoadingApp(true);
@@ -35,19 +37,34 @@ const Sellers = (props) => {
   }, [props.selectedIds]);
 
   const deleteRowSellers = () => {
-    if (window.confirm("Are u sure?")) {
-      if (props.selectedIds.length >= 1) {
-        for (let i = 0; i < props.selectedIds.length; i++) {
-          fetch(
+    if (props.selectedIds.length >= 1) {
+      for (let i = 0; i < props.selectedIds.length; i++) {
+        let counter = 0;
+        props.invoices.map((item) => {
+          if (String(editSellersData.companyName) === String(item.sellerName)) {
+            return (counter = 1);
+          } else {
+            return counter;
+          }
+        });
+
+        if (Number(counter) === Number(0)) {
+          return fetch(
             `https://63ce9ae9fdfe2764c726a809.mockapi.io/sellers/${props.selectedIds[i]}`,
             {
               method: "DELETE",
             }
+          ).then(
+            alert("asdasdasd"),
+            props.fetchSellers(),
+            setOpenDeleteSeller(false)
           );
         }
-        alert("asdasdasd");
-        props.fetchSellers();
       }
+
+      alert("Ne moze se obrisati");
+      props.setSelectedIds([]);
+      setOpenDeleteSeller(false);
     }
   };
 
@@ -84,7 +101,9 @@ const Sellers = (props) => {
                 className={`${styles.delete} ${
                   isDisabledDelete ? styles.disabled : ""
                 }`}
-                onClick={(e) => deleteRowSellers(props.sellers.id, e)}
+                onClick={() => {
+                  setOpenDeleteSeller(true);
+                }}
               >
                 <img src="./assets/close.png" alt="" />
               </div>
@@ -117,7 +136,7 @@ const Sellers = (props) => {
                           props.selectedIds.filter((id) => id !== item.id)
                         );
                       } else {
-                        setSellersData(item);
+                        setEditSellersData(item);
                         props.setSelectedIds([...props.selectedIds, item.id]);
                       }
                     }}
@@ -145,6 +164,14 @@ const Sellers = (props) => {
             </tbody>
           )}
         </table>
+        {openDeleteSeller && (
+          <DeleteSellers
+            sellers={props.sellers}
+            setOpenDeleteSeller={setOpenDeleteSeller}
+            deleteRowSellers={deleteRowSellers}
+            setSelectedIds={props.setSelectedIds}
+          />
+        )}
         {openSellersAdd && (
           <AddSellers
             closeSellersModal={setOpenSellersAdd}

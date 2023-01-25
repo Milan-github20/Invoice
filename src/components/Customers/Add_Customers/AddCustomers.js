@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import styles from "../Add_Customers/addCustomers.module.css";
 import ReactDOM from "react-dom";
 import axios from "axios";
@@ -8,10 +8,21 @@ const BackDrop = () => {
 };
 
 const ModalAddCustomers = (props) => {
+  const [value, setValue] = useState("");
+
   const nameCustomer = useRef();
   const surnameCustomer = useRef();
   const addressCustomer = useRef();
   const ageCustomer = useRef();
+
+  const handleChange = (e) => {
+    const inputValue = e.target.value;
+    if (inputValue < 0) {
+      setValue("");
+    } else {
+      setValue(inputValue);
+    }
+  };
 
   const submitAddCustomer = (e) => {
     e.preventDefault();
@@ -59,7 +70,12 @@ const ModalAddCustomers = (props) => {
           <h4>Address</h4>
           <input type="text" ref={addressCustomer} />
           <h4>Age</h4>
-          <input type="number" ref={ageCustomer} />
+          <input
+            type="number"
+            value={value}
+            onChange={handleChange}
+            ref={ageCustomer}
+          />
         </div>
         <div className={styles.buttons}>
           <button

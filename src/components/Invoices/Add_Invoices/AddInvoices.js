@@ -9,6 +9,8 @@ const BackDrop = () => {
 };
 
 const ModalAddInvoices = (props) => {
+  const [value, setValue] = useState("");
+
   const sellerRefAdd = useRef();
   const customerRefAdd = useRef();
   const dateRefAdd = useRef();
@@ -18,6 +20,15 @@ const ModalAddInvoices = (props) => {
     if (event.key === "Enter") {
       event.preventDefault();
       submitAddInvoices(event);
+    }
+  };
+
+  const handleChange = (e) => {
+    const inputValue = e.target.value;
+    if (inputValue < 0) {
+      setValue("");
+    } else {
+      setValue(inputValue);
     }
   };
 
@@ -62,14 +73,18 @@ const ModalAddInvoices = (props) => {
           <select ref={sellerRefAdd}>
             {props.sellers.map((item) => {
               if (item.isActive === "Active") {
-                return <option>{item.companyName}</option>;
+                return <option key={item.id}>{item.companyName}</option>;
+              } else {
+                return null;
               }
             })}
           </select>
           <h4>Customer</h4>
           <select ref={customerRefAdd}>
             {props.customers.map((item) => {
-              return <option>{item.name + " " + item.surname}</option>;
+              return (
+                <option key={item.id}>{item.name + " " + item.surname}</option>
+              );
             })}
           </select>
           <h4>Date</h4>
@@ -79,7 +94,12 @@ const ModalAddInvoices = (props) => {
             max={format(new Date(), "yyyy-MM-dd")}
           />
           <h4>Amount</h4>
-          <input ref={amountRefAdd} type="number" min="0" />
+          <input
+            ref={amountRefAdd}
+            value={value}
+            onChange={handleChange}
+            type="number"
+          />
         </div>
         <div className={styles.buttons}>
           <button

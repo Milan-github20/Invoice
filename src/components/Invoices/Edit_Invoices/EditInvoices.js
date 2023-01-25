@@ -64,6 +64,8 @@ const ModalEditInvoices = (props) => {
             {props.sellers.map((item) => {
               if (item.isActive === "Active") {
                 return <option key={item.id}>{item.companyName}</option>;
+              } else {
+                return null;
               }
             })}
           </select>

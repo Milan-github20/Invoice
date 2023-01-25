@@ -3,10 +3,12 @@ import styles from "../Customers_Main/customers.module.css";
 import AddCustomers from "../Add_Customers/AddCustomers";
 import EditCustomers from "../Edit_Customers/EditCustomers";
 import { ClipLoader } from "react-spinners";
+import DeleteCustomers from "../DeleteCustomer/DeleteCustomer";
 
 const Customers = (props) => {
   const [openCustomersAdd, setOpenCustomersAdd] = useState(false);
   const [openCustomersEdit, setOpenCustomersEdit] = useState(false);
+  const [openDeleteCustomer, setOpenDeleteCustomer] = useState(false);
 
   const [isDisabled, setIsDisabled] = useState(true);
   const [isDisabledDelete, setIsDisabledDelete] = useState(true);
@@ -35,19 +37,37 @@ const Customers = (props) => {
   }, [props.selectedIds]);
 
   const deleteRowCustomers = () => {
-    if (window.confirm("Are u sure?")) {
-      if (props.selectedIds.length >= 1) {
-        for (let i = 0; i < props.selectedIds.length; i++) {
-          fetch(
+    if (props.selectedIds.length >= 1) {
+      for (let i = 0; i < props.selectedIds.length; i++) {
+        let counter = 0;
+        props.invoices.map((item) => {
+          if (
+            String(editCustomersData.name + " " + editCustomersData.surname) ===
+            String(item.customerName)
+          ) {
+            return (counter = 1);
+          } else {
+            return counter;
+          }
+        });
+
+        if (Number(counter) === Number(0)) {
+          return fetch(
             `https://63ce642b6d27349c2b6c72c5.mockapi.io/customers/${props.selectedIds[i]}`,
             {
               method: "DELETE",
             }
+          ).then(
+            alert("asdasdasd"),
+            props.fetchCustomers(),
+            setOpenDeleteCustomer(false)
           );
         }
-        alert("asdasdasd");
-        props.fetchCustomers();
       }
+
+      alert("Ne moze se obrisati");
+      setOpenDeleteCustomer(false);
+      props.setSelectedIds([]);
     }
   };
 
@@ -84,8 +104,8 @@ const Customers = (props) => {
                 className={`${styles.delete} ${
                   isDisabledDelete ? styles.disabled : ""
                 }`}
-                onClick={(e) => {
-                  deleteRowCustomers(props.customers.id, e);
+                onClick={() => {
+                  setOpenDeleteCustomer(true);
                 }}
               >
                 <img src="./assets/close.png" alt="" />
@@ -140,6 +160,14 @@ const Customers = (props) => {
             </tbody>
           )}
         </table>
+        {openDeleteCustomer && (
+          <DeleteCustomers
+            deleteRowCustomers={deleteRowCustomers}
+            setOpenDeleteCustomer={setOpenDeleteCustomer}
+            customers={props.customers}
+            setSelectedIds={props.setSelectedIds}
+          />
+        )}
         {openCustomersAdd && (
           <AddCustomers
             closeCustomersModal={setOpenCustomersAdd}

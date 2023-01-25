@@ -12,6 +12,23 @@ function App() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [invoices, setInvoices] = useState([]);
+
+  const fetchInvoices = () => {
+    fetch("https://63ce642b6d27349c2b6c72c5.mockapi.io/invoice")
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setInvoices(result);
+          setIsLoaded(true);
+          setSelectedIds([]);
+        },
+        (error) => {
+          setError(error);
+          setIsLoaded(true);
+        }
+      );
+  };
 
   const fetchCustomers = () => {
     fetch("https://63ce642b6d27349c2b6c72c5.mockapi.io/customers")
@@ -48,6 +65,7 @@ function App() {
   useEffect(() => {
     fetchCustomers();
     fetchSellers();
+    fetchInvoices();
   }, []);
 
   return (
@@ -56,7 +74,18 @@ function App() {
       <Routes>
         <Route
           path="/invoices"
-          element={<Invoices sellers={sellers} customers={customers} />}
+          element={
+            <Invoices
+              sellers={sellers}
+              customers={customers}
+              invoices={invoices}
+              error={error}
+              isLoaded={isLoaded}
+              fetchInvoices={fetchInvoices}
+              selectedIds={selectedIds}
+              setSelectedIds={setSelectedIds}
+            />
+          }
         />
         <Route
           path="/sellers"
@@ -68,6 +97,7 @@ function App() {
               fetchSellers={fetchSellers}
               selectedIds={selectedIds}
               setSelectedIds={setSelectedIds}
+              invoices={invoices}
             />
           }
         />
@@ -81,6 +111,7 @@ function App() {
               fetchCustomers={fetchCustomers}
               selectedIds={selectedIds}
               setSelectedIds={setSelectedIds}
+              invoices={invoices}
             />
           }
         />

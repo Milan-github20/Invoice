@@ -1,0 +1,66 @@
+.backdrop {
+  background-color: rgba(93, 93, 93, 0.3);
+  position: fixed;
+  overflow-x: hidden;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  z-index: 1;
+}
+
+.mainDiv {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  border: 3px solid #cdcdcd;
+  height: 8rem;
+  border-radius: 20px;
+  width: 400px;
+  z-index: 2;
+  width: 16vw;
+  top: 25%;
+  left: 44.5%;
+}
+
+.mainDiv h3 {
+  margin-top: 15px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-around;
+  width: 90%;
+  margin-top: 10px;
+  height: 35px;
+}
+
+.buttons .yes {
+  width: 110px;
+  background-color: #f7cecc;
+  border: 2px solid #cb5d57;
+  color: #505151;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.buttons .yes:hover {
+  background-color: #fdb7b4;
+}
+
+.buttons .no {
+  width: 110px;
+  background-color: #f5f5f5;
+  border: 2px solid #888888;
+  color: #505151;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.buttons .no:hover {
+  background-color: #d7d2d2;
+}

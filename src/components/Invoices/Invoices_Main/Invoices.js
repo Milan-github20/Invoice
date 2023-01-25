@@ -3,16 +3,13 @@ import styles from "../Invoices_Main/invoices.module.css";
 import AddInvoices from "../Add_Invoices/AddInvoices";
 import EditInvoices from "../Edit_Invoices/EditInvoices";
 import { ClipLoader } from "react-spinners";
+import DeleteInvoices from "../DeleteInvoices/DeleteInvoices";
 
 const Invoices = (props) => {
   const [openInvoicesAdd, setOpenInvoicesAdd] = useState(false);
   const [openInvoicesEdit, setOpenInvoicesEdit] = useState(false);
+  const [openDeleteInvoices, setOpenDeleteInvoices] = useState(false);
 
-  const [invoices, setInvoices] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  const [selectedIds, setSelectedIds] = useState([]);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isDisabledDelete, setIsDisabledDelete] = useState(true);
 
@@ -27,58 +24,37 @@ const Invoices = (props) => {
     }, 1000);
   }, []);
 
-  const fetchInvoices = () => {
-    fetch("https://63ce642b6d27349c2b6c72c5.mockapi.io/invoice")
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setInvoices(result);
-          setIsLoaded(true);
-          setSelectedIds([]);
-        },
-        (error) => {
-          setError(error);
-          setIsLoaded(true);
-        }
-      );
-  };
-
   useEffect(() => {
-    fetchInvoices();
-  }, []);
-
-  useEffect(() => {
-    if (selectedIds.length === 0) {
-      setIsDisabled(selectedIds.length === 0);
-      setIsDisabledDelete(selectedIds.length === 0);
-    } else if (selectedIds.length === 1) {
-      setIsDisabled(selectedIds.length <= 0);
-      setIsDisabledDelete(selectedIds.length <= 0);
-    } else if (selectedIds.length === 2) {
-      setIsDisabled(selectedIds.length !== 1);
+    if (props.selectedIds.length === 0) {
+      setIsDisabled(props.selectedIds.length === 0);
+      setIsDisabledDelete(props.selectedIds.length === 0);
+    } else if (props.selectedIds.length === 1) {
+      setIsDisabled(props.selectedIds.length <= 0);
+      setIsDisabledDelete(props.selectedIds.length <= 0);
+    } else if (props.selectedIds.length === 2) {
+      setIsDisabled(props.selectedIds.length !== 1);
     }
-  }, [selectedIds]);
+  }, [props.selectedIds]);
 
   const deleteRowInvoices = () => {
-    if (window.confirm("Are u sure?")) {
-      if (selectedIds.length >= 1) {
-        for (let i = 0; i < selectedIds.length; i++) {
-          fetch(
-            `https://63ce642b6d27349c2b6c72c5.mockapi.io/invoice/${selectedIds[i]}`,
-            {
-              method: "DELETE",
-            }
-          );
-        }
-        alert("asdasdasd");
-        fetchInvoices();
+    if (props.selectedIds.length >= 1) {
+      for (let i = 0; i < props.selectedIds.length; i++) {
+        fetch(
+          `https://63ce642b6d27349c2b6c72c5.mockapi.io/invoice/${props.selectedIds[i]}`,
+          {
+            method: "DELETE",
+          }
+        );
       }
+      alert("asdasdasd");
+      props.fetchInvoices();
+      setOpenDeleteInvoices(false);
     }
   };
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  } else if (!isLoaded) {
+  if (props.error) {
+    return <div>Error: {props.error.message}</div>;
+  } else if (!props.isLoaded) {
     return;
   } else {
     return (
@@ -109,8 +85,8 @@ const Invoices = (props) => {
                 className={`${styles.delete} ${
                   isDisabledDelete ? styles.disabled : ""
                 }`}
-                onClick={(e) => {
-                  deleteRowInvoices(invoices.id, e);
+                onClick={() => {
+                  setOpenDeleteInvoices(true);
                 }}
               >
                 <img src="./assets/close.png" alt="" />
@@ -135,29 +111,30 @@ const Invoices = (props) => {
             />
           ) : (
             <tbody className={styles.tbody}>
-              {invoices.map((item) => {
+              {props.invoices.map((item) => {
                 return (
                   <tr
                     key={item.id}
                     onClick={() => {
-                      if (selectedIds.includes(item.id)) {
-                        setSelectedIds(
-                          selectedIds.filter((id) => id !== item.id)
+                      if (props.selectedIds.includes(item.id)) {
+                        props.setSelectedIds(
+                          props.selectedIds.filter((id) => id !== item.id)
                         );
                       } else {
                         setInvoicesData(item);
-                        setSelectedIds([...selectedIds, item.id]);
+                        props.setSelectedIds([...props.selectedIds, item.id]);
                       }
                     }}
                     className={
-                      selectedIds.includes(item.id) ? styles.selectedRow : ""
+                      props.selectedIds.includes(item.id)
+                        ? styles.selectedRow
+                        : ""
                     }
                   >
                     <td>{item.sellerName}</td>
                     <td>{item.customerName}</td>
                     <td>{item.date}</td>
                     <td>
-                      {/* {item.amount}$ */}
                       {new Intl.NumberFormat("en-US", {
                         style: "currency",
                         currency: "USD",
@@ -170,19 +147,28 @@ const Invoices = (props) => {
             </tbody>
           )}
         </table>
+
+        {openDeleteInvoices && (
+          <DeleteInvoices
+            deleteRowInvoices={deleteRowInvoices}
+            setOpenDeleteInvoices={setOpenDeleteInvoices}
+            invoices={props.invoices}
+            setSelectedIds={props.setSelectedIds}
+          />
+        )}
         {openInvoicesAdd && (
           <AddInvoices
             closeInvoicesModal={setOpenInvoicesAdd}
             sellers={props.sellers}
             customers={props.customers}
-            fetchInvoices={fetchInvoices}
+            fetchInvoices={props.fetchInvoices}
           />
         )}
         {openInvoicesEdit && (
           <EditInvoices
             closeInvoicesModalEdit={setOpenInvoicesEdit}
             editInvoicesData={editInvoicesData}
-            fetchInvoices={fetchInvoices}
+            fetchInvoices={props.fetchInvoices}
             sellers={props.sellers}
             customers={props.customers}
           />
