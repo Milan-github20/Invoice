@@ -3,12 +3,21 @@ import styles from "../Edit_Invoices/editInvoices.module.css";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import { format } from "date-fns";
+import {
+  NotificationsAmountEdit,
+  NotificationsDateEdit,
+  NotificationsEditSubmit,
+} from "../NotificationsInvoices/NotificationsInvoices";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
 };
 
 const ModalEditInvoices = (props) => {
+  const [notificationsDateEdit, setNotificationsDateEdit] = useState(false);
+  const [notificationsAmountEdit, setNotificationsAmountEdit] = useState(false);
+  const [notificationsEditSubmit, setNotificationsEditSubmit] = useState(false);
+
   const [seller, setSeller] = useState(props.editInvoicesData.sellerName);
   const [customer, setCustomer] = useState(props.editInvoicesData.customerName);
   const [date, setDate] = useState(props.editInvoicesData.date);
@@ -21,8 +30,33 @@ const ModalEditInvoices = (props) => {
     }
   };
 
+  const handleChange = (e) => {
+    const inputValue = e.target.value;
+    if (inputValue < 0) {
+      setAmount("");
+    } else {
+      setAmount(inputValue);
+    }
+  };
+
   const submitEditInvoices = (e) => {
     e.preventDefault();
+
+    if (date.trim() === "") {
+      setNotificationsDateEdit(true);
+      setTimeout(() => {
+        setNotificationsDateEdit(false);
+      }, 1500);
+      return;
+    }
+
+    if (amount.trim() === "") {
+      setNotificationsAmountEdit(true);
+      setTimeout(() => {
+        setNotificationsAmountEdit(false);
+      }, 1500);
+      return;
+    }
 
     axios
       .put(
@@ -34,11 +68,14 @@ const ModalEditInvoices = (props) => {
           amount: amount,
         }
       )
-      .then(
-        alert("daaaaa"),
-        props.fetchInvoices(),
-        props.closeInvoicesModalEdit(false)
-      );
+      .then(() => {
+        setNotificationsEditSubmit(true);
+        setTimeout(() => {
+          setNotificationsEditSubmit(false);
+          props.fetchInvoices();
+          props.closeInvoicesModalEdit(false);
+        }, 1000);
+      });
   };
 
   return (
@@ -90,7 +127,10 @@ const ModalEditInvoices = (props) => {
           <h4>Amount</h4>
           <input
             type="number"
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => {
+              setAmount(e.target.value);
+              handleChange(e);
+            }}
             defaultValue={amount}
           />
         </div>
@@ -106,6 +146,26 @@ const ModalEditInvoices = (props) => {
           <button className={styles.save}>Save</button>
         </div>
       </form>
+      {notificationsDateEdit && date.length === 0 ? (
+        <NotificationsDateEdit
+          setNotificationsDateEdit={setNotificationsDateEdit}
+        />
+      ) : (
+        ""
+      )}
+      {notificationsAmountEdit && amount.length === 0 ? (
+        <NotificationsAmountEdit
+          setNotificationsAmountEdit={setNotificationsAmountEdit}
+        />
+      ) : (
+        ""
+      )}
+
+      {notificationsEditSubmit && (
+        <NotificationsEditSubmit
+          setNotificationsEditSubmit={setNotificationsEditSubmit}
+        />
+      )}
     </div>
   );
 };

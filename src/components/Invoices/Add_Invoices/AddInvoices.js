@@ -3,6 +3,11 @@ import styles from "../Add_Invoices/addInvoices.module.css";
 import ReactDOM from "react-dom";
 import { format } from "date-fns";
 import axios from "axios";
+import {
+  NotificationsAddSubmit,
+  NotificationsAmount,
+  NotificationsDate,
+} from "../NotificationsInvoices/NotificationsInvoices";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
@@ -10,6 +15,10 @@ const BackDrop = () => {
 
 const ModalAddInvoices = (props) => {
   const [value, setValue] = useState("");
+
+  const [notificationsDate, setNotificationsDate] = useState(false);
+  const [notificationsAmount, setNotificationsAmount] = useState(false);
+  const [notificationsAddSubmit, setNotificationsAddSubmit] = useState(false);
 
   const sellerRefAdd = useRef();
   const customerRefAdd = useRef();
@@ -35,6 +44,22 @@ const ModalAddInvoices = (props) => {
   const submitAddInvoices = (e) => {
     e.preventDefault();
 
+    if (dateRefAdd.current.value.trim() === "") {
+      setNotificationsDate(true);
+      setTimeout(() => {
+        setNotificationsDate(false);
+      }, 1500);
+      return;
+    }
+
+    if (amountRefAdd.current.value.trim() === "") {
+      setNotificationsAmount(true);
+      setTimeout(() => {
+        setNotificationsAmount(false);
+      }, 1500);
+      return;
+    }
+
     axios
       .post("https://63ce642b6d27349c2b6c72c5.mockapi.io/invoice", {
         sellerName: sellerRefAdd.current.value,
@@ -43,9 +68,12 @@ const ModalAddInvoices = (props) => {
         amount: amountRefAdd.current.value,
       })
       .then(() => {
-        alert("da");
-        props.fetchInvoices();
-        props.closeInvoicesModal(false);
+        setNotificationsAddSubmit(true);
+        setTimeout(() => {
+          setNotificationsAddSubmit(false);
+          props.fetchInvoices();
+          props.closeInvoicesModal(false);
+        }, 1000);
       });
   };
 
@@ -93,6 +121,7 @@ const ModalAddInvoices = (props) => {
             type="date"
             max={format(new Date(), "yyyy-MM-dd")}
           />
+
           <h4>Amount</h4>
           <input
             ref={amountRefAdd}
@@ -112,6 +141,26 @@ const ModalAddInvoices = (props) => {
           </button>
           <button className={styles.create}>Create</button>
         </div>
+
+        {notificationsDate && dateRefAdd.current.value.length === 0 ? (
+          <NotificationsDate setNotificationsDate={setNotificationsDate} />
+        ) : (
+          ""
+        )}
+
+        {notificationsAmount && amountRefAdd.current.value.length === 0 ? (
+          <NotificationsAmount
+            setNotificationsAmount={setNotificationsAmount}
+          />
+        ) : (
+          ""
+        )}
+
+        {notificationsAddSubmit && (
+          <NotificationsAddSubmit
+            setNotificationsAddSubmit={setNotificationsAddSubmit}
+          />
+        )}
       </form>
     </div>
   );

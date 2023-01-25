@@ -1,0 +1,95 @@
+.mainDiv {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: #f8e4e5;
+  border: 2px solid #a16664;
+  width: 90%;
+  border-radius: 15px;
+  align-items: center;
+  top: -25%;
+  left: 210%;
+}
+
+.span {
+  display: flex;
+  justify-content: flex-end;
+  width: 90%;
+  height: 20px;
+  align-items: center;
+}
+
+.span span {
+  margin-top: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.mainDiv h4 {
+  margin-bottom: 15px;
+  margin-top: 0px;
+  color: black;
+}
+
+.mainDivAdd {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: #d4e9d4;
+  border: 2px solid #96b47e;
+  justify-content: center;
+  text-align: center;
+  width: 90%;
+  border-radius: 15px;
+  align-items: center;
+  top: -25%;
+  left: 210%;
+}
+
+.mainDivAdd h4 {
+  margin-bottom: 15px;
+  margin-top: 5px;
+  color: black;
+}
+
+.mainDivEdit {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: #d4e9d4;
+  border: 2px solid #96b47e;
+  justify-content: center;
+  text-align: center;
+  width: 90%;
+  border-radius: 15px;
+  align-items: center;
+  top: -25%;
+  left: 210%;
+}
+
+.mainDivEdit h4 {
+  margin-bottom: 15px;
+  margin-top: 5px;
+  color: black;
+}
+
+.mainDivDelete {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: #d4e9d4;
+  border: 2px solid #96b47e;
+  justify-content: center;
+  text-align: center;
+  width: 95%;
+  border-radius: 15px;
+  align-items: center;
+  top: -165%;
+  left: 240%;
+}
+
+.mainDivDelete h4 {
+  margin-bottom: 15px;
+  margin-top: 5px;
+  color: black;
+}

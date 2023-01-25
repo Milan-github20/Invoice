@@ -6,6 +6,9 @@ import { ClipLoader } from "react-spinners";
 import DeleteInvoices from "../DeleteInvoices/DeleteInvoices";
 
 const Invoices = (props) => {
+  const [notificationsDeleteInvoices, setNotificationsDeleteInvoices] =
+    useState(false);
+
   const [openInvoicesAdd, setOpenInvoicesAdd] = useState(false);
   const [openInvoicesEdit, setOpenInvoicesEdit] = useState(false);
   const [openDeleteInvoices, setOpenDeleteInvoices] = useState(false);
@@ -46,10 +49,13 @@ const Invoices = (props) => {
           }
         );
       }
-      alert("asdasdasd");
+    }
+    setNotificationsDeleteInvoices(true);
+    setTimeout(() => {
+      setNotificationsDeleteInvoices(false);
       props.fetchInvoices();
       setOpenDeleteInvoices(false);
-    }
+    }, 1000);
   };
 
   if (props.error) {
@@ -154,6 +160,8 @@ const Invoices = (props) => {
             setOpenDeleteInvoices={setOpenDeleteInvoices}
             invoices={props.invoices}
             setSelectedIds={props.setSelectedIds}
+            setNotificationsDeleteInvoices={setNotificationsDeleteInvoices}
+            notificationsDeleteInvoices={notificationsDeleteInvoices}
           />
         )}
         {openInvoicesAdd && (

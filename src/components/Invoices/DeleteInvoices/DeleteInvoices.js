@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./deleteInvoices.module.css";
 import ReactDOM from "react-dom";
+import { NotificationsDeleteInvoice } from "../NotificationsInvoices/NotificationsInvoices";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
@@ -15,6 +16,7 @@ const DeleteInvoicesModal = (props) => {
           className={styles.yes}
           onClick={(e) => {
             props.deleteRowInvoices(props.invoices.id, e);
+            props.setNotificationsDeleteInvoices(true);
           }}
         >
           Yes
@@ -29,6 +31,11 @@ const DeleteInvoicesModal = (props) => {
           No
         </button>
       </div>
+      {props.notificationsDeleteInvoices && (
+        <NotificationsDeleteInvoice
+          setNotificationsDeleteInvoices={props.setNotificationsDeleteInvoices}
+        />
+      )}
     </div>
   );
 };
@@ -46,6 +53,8 @@ const DeleteInvoices = (props) => {
           setOpenDeleteInvoices={props.setOpenDeleteInvoices}
           invoices={props.invoices}
           setSelectedIds={props.setSelectedIds}
+          setNotificationsDeleteInvoices={props.setNotificationsDeleteInvoices}
+          notificationsDeleteInvoices={props.notificationsDeleteInvoices}
         ></DeleteInvoicesModal>,
 
         document.getElementById("modal")
