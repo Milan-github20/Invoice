@@ -4,16 +4,13 @@ import AddInvoices from "../Add_Invoices/AddInvoices";
 import EditInvoices from "../Edit_Invoices/EditInvoices";
 import { ClipLoader } from "react-spinners";
 import DeleteInvoices from "../DeleteInvoices/DeleteInvoices";
-import { Link, Outlet, Route, Routes, useParams } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 
 const Invoices = (props) => {
-  const params = useParams();
-
   const [notificationsDeleteInvoices, setNotificationsDeleteInvoices] =
     useState(false);
 
   const [openInvoicesAdd, setOpenInvoicesAdd] = useState(false);
-  const [openInvoicesEdit, setOpenInvoicesEdit] = useState(false);
   const [openDeleteInvoices, setOpenDeleteInvoices] = useState(false);
 
   const [isDisabled, setIsDisabled] = useState(true);
@@ -80,14 +77,16 @@ const Invoices = (props) => {
               >
                 <img src="./assets/plus.png" alt="" />
               </div>
-              <Link to={`/invoices/${props.selectedIds}`}>
+              <Link
+                to={`/invoices/${props.selectedIds}`}
+                className={`${styles.edit} ${
+                  isDisabled ? styles.disabled : ""
+                }`}
+              >
                 <div
                   className={`${styles.edit} ${
                     isDisabled ? styles.disabled : ""
                   }`}
-                  onClick={() => {
-                    setOpenInvoicesEdit(true);
-                  }}
                 >
                   <img src="./assets/pen.png" alt="" />
                 </div>
@@ -124,7 +123,6 @@ const Invoices = (props) => {
             <tbody className={styles.tbody}>
               {props.invoices.map((item) => {
                 return (
-                  // <Link >
                   <tr
                     key={item.id}
                     onClick={() => {
@@ -154,7 +152,6 @@ const Invoices = (props) => {
                       }).format(item.amount)}
                     </td>
                   </tr>
-                  // </Link>
                 );
               })}
             </tbody>
@@ -179,22 +176,12 @@ const Invoices = (props) => {
             fetchInvoices={props.fetchInvoices}
           />
         )}
-        {openInvoicesEdit && (
-          <EditInvoices
-            closeInvoicesModalEdit={setOpenInvoicesEdit}
-            editInvoicesData={editInvoicesData}
-            fetchInvoices={props.fetchInvoices}
-            sellers={props.sellers}
-            customers={props.customers}
-            setSelectedIds={props.setSelectedIds}
-          />
-        )}
+
         <Routes>
           <Route
             path="/:id"
             element={
               <EditInvoices
-                closeInvoicesModalEdit={setOpenInvoicesEdit}
                 editInvoicesData={editInvoicesData}
                 fetchInvoices={props.fetchInvoices}
                 sellers={props.sellers}

@@ -8,14 +8,14 @@ import {
   NotificationsDateEdit,
   NotificationsEditSubmit,
 } from "../NotificationsInvoices/NotificationsInvoices";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
 };
 
 const ModalEditInvoices = (props) => {
-  const params = useParams();
+  const navigate = useNavigate();
 
   const [notificationsDateEdit, setNotificationsDateEdit] = useState(false);
   const [notificationsAmountEdit, setNotificationsAmountEdit] = useState(false);
@@ -33,8 +33,6 @@ const ModalEditInvoices = (props) => {
     }
   };
 
-  console.log(params.id);
-
   const handleChange = (e) => {
     const inputValue = e.target.value;
     if (inputValue < 0) {
@@ -47,7 +45,7 @@ const ModalEditInvoices = (props) => {
   const submitEditInvoices = (e) => {
     e.preventDefault();
 
-    if (date.trim() === "") {
+    if (date === "") {
       setNotificationsDateEdit(true);
       setTimeout(() => {
         setNotificationsDateEdit(false);
@@ -55,7 +53,7 @@ const ModalEditInvoices = (props) => {
       return;
     }
 
-    if (amount.trim() === "") {
+    if (amount === "") {
       setNotificationsAmountEdit(true);
       setTimeout(() => {
         setNotificationsAmountEdit(false);
@@ -77,8 +75,9 @@ const ModalEditInvoices = (props) => {
         setNotificationsEditSubmit(true);
         setTimeout(() => {
           setNotificationsEditSubmit(false);
+          // props.closeInvoicesModalEdit(false);
+          navigate("/invoices");
           props.fetchInvoices();
-          props.closeInvoicesModalEdit(false);
         }, 1000);
       });
   };
@@ -140,18 +139,20 @@ const ModalEditInvoices = (props) => {
           />
         </div>
         <div className={styles.buttons}>
-          <button
-            className={styles.discard}
-            onClick={() => {
-              props.closeInvoicesModalEdit(false);
-              props.setSelectedIds([]);
-            }}
-          >
-            Discard
-          </button>
+          <Link to={`/invoices`}>
+            <button
+              className={styles.discard}
+              onClick={() => {
+                props.setSelectedIds([]);
+              }}
+            >
+              Discard
+            </button>
+          </Link>
           <button className={styles.save}>Save</button>
         </div>
       </form>
+
       {notificationsDateEdit && date.length === 0 ? (
         <NotificationsDateEdit
           setNotificationsDateEdit={setNotificationsDateEdit}
@@ -185,7 +186,6 @@ const EditInvoices = (props) => {
       )}
       {ReactDOM.createPortal(
         <ModalEditInvoices
-          closeInvoicesModalEdit={props.closeInvoicesModalEdit}
           fetchInvoices={props.fetchInvoices}
           editInvoicesData={props.editInvoicesData}
           sellers={props.sellers}

@@ -133,3 +133,16 @@
   pointer-events: none;
   background-color: #f4f4f4 !important;
 }
+
+a {
+  border-radius: 50%;
+}
+
+.edit div {
+  display: flex;
+  justify-content: center;
+  width: 50px;
+  cursor: pointer;
+  align-items: center;
+  height: 51px;
+}

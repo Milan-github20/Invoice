@@ -111,3 +111,8 @@
 .buttons .save:hover {
   background-color: #c2d7c2;
 }
+
+a .discard {
+  height: 31px;
+  border: none;
+}
