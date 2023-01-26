@@ -5,8 +5,20 @@ import EditInvoices from "../Edit_Invoices/EditInvoices";
 import { ClipLoader } from "react-spinners";
 import DeleteInvoices from "../DeleteInvoices/DeleteInvoices";
 import { Link, Route, Routes } from "react-router-dom";
+import ReactPaginate from "react-paginate";
 
 const Invoices = (props) => {
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+
+  const pageCount = Math.ceil(props.invoices.length / usersPerPage);
+
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
   const [notificationsDeleteInvoices, setNotificationsDeleteInvoices] =
     useState(false);
 
@@ -121,42 +133,55 @@ const Invoices = (props) => {
             />
           ) : (
             <tbody className={styles.tbody}>
-              {props.invoices.map((item) => {
-                return (
-                  <tr
-                    key={item.id}
-                    onClick={() => {
-                      if (props.selectedIds.includes(item.id)) {
-                        props.setSelectedIds(
-                          props.selectedIds.filter((id) => id !== item.id)
-                        );
-                      } else {
-                        setInvoicesData(item);
-                        props.setSelectedIds([...props.selectedIds, item.id]);
+              {props.invoices
+                .slice(pagesVisited, pagesVisited + usersPerPage)
+                .map((item) => {
+                  return (
+                    <tr
+                      key={item.id}
+                      onClick={() => {
+                        if (props.selectedIds.includes(item.id)) {
+                          props.setSelectedIds(
+                            props.selectedIds.filter((id) => id !== item.id)
+                          );
+                        } else {
+                          setInvoicesData(item);
+                          props.setSelectedIds([...props.selectedIds, item.id]);
+                        }
+                      }}
+                      className={
+                        props.selectedIds.includes(item.id)
+                          ? styles.selectedRow
+                          : ""
                       }
-                    }}
-                    className={
-                      props.selectedIds.includes(item.id)
-                        ? styles.selectedRow
-                        : ""
-                    }
-                  >
-                    <td>{item.sellerName}</td>
-                    <td>{item.customerName}</td>
-                    <td>{item.date}</td>
-                    <td>
-                      {new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                        maximumFractionDigits: 0,
-                      }).format(item.amount)}
-                    </td>
-                  </tr>
-                );
-              })}
+                    >
+                      <td>{item.sellerName}</td>
+                      <td>{item.customerName}</td>
+                      <td>{item.date}</td>
+                      <td>
+                        {new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                          maximumFractionDigits: 0,
+                        }).format(item.amount)}
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           )}
         </table>
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          pageCount={pageCount}
+          onPageChange={changePage}
+          containerClassName={styles.paginationBttns}
+          previousLinkClassName={styles.previousBttn}
+          nextLinkClassName={styles.nextBttn}
+          disabledClassName={styles.paginationDisabled}
+          activeClassName={styles.paginationActive}
+        />
 
         {openDeleteInvoices && (
           <DeleteInvoices

@@ -4,10 +4,30 @@ import AddCustomers from "../Add_Customers/AddCustomers";
 import EditCustomers from "../Edit_Customers/EditCustomers";
 import { ClipLoader } from "react-spinners";
 import DeleteCustomers from "../DeleteCustomer/DeleteCustomer";
+import { Link, Route, Routes } from "react-router-dom";
+import ReactPaginate from "react-paginate";
 
 const Customers = (props) => {
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+
+  const pageCount = Math.ceil(props.customers.length / usersPerPage);
+
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const [notificationsDeleteCustomers, setNotificationsDeleteCustomers] =
+    useState(false);
+
+  const [
+    notificationsDeleteCustomersError,
+    setNotificationsDeleteCustomersError,
+  ] = useState(false);
+
   const [openCustomersAdd, setOpenCustomersAdd] = useState(false);
-  const [openCustomersEdit, setOpenCustomersEdit] = useState(false);
   const [openDeleteCustomer, setOpenDeleteCustomer] = useState(false);
 
   const [isDisabled, setIsDisabled] = useState(true);
@@ -57,17 +77,22 @@ const Customers = (props) => {
             {
               method: "DELETE",
             }
-          ).then(
-            alert("asdasdasd"),
-            props.fetchCustomers(),
-            setOpenDeleteCustomer(false)
-          );
+          ).then(() => {
+            setNotificationsDeleteCustomers(true);
+            setTimeout(() => {
+              setNotificationsDeleteCustomers(false);
+              props.fetchCustomers();
+              setOpenDeleteCustomer(false);
+            }, 1000);
+          });
         }
       }
-
-      alert("Ne moze se obrisati");
-      setOpenDeleteCustomer(false);
-      props.setSelectedIds([]);
+      setNotificationsDeleteCustomersError(true);
+      setTimeout(() => {
+        setNotificationsDeleteCustomersError(false);
+        setOpenDeleteCustomer(false);
+        props.setSelectedIds([]);
+      }, 2000);
     }
   };
 
@@ -90,16 +115,20 @@ const Customers = (props) => {
               >
                 <img src="./assets/plus.png" alt="" />
               </div>
-              <div
+              <Link
+                to={`/customers/${props.selectedIds}`}
                 className={`${styles.edit} ${
                   isDisabled ? styles.disabled : ""
                 }`}
-                onClick={() => {
-                  setOpenCustomersEdit(true);
-                }}
               >
-                <img src="./assets/pen.png" alt="" />
-              </div>
+                <div
+                  className={`${styles.edit} ${
+                    isDisabled ? styles.disabled : ""
+                  }`}
+                >
+                  <img src="./assets/pen.png" alt="" />
+                </div>
+              </Link>
               <div
                 className={`${styles.delete} ${
                   isDisabledDelete ? styles.disabled : ""
@@ -130,42 +159,63 @@ const Customers = (props) => {
             />
           ) : (
             <tbody className={styles.tbody}>
-              {props.customers.map((item) => {
-                return (
-                  <tr
-                    key={item.id}
-                    onClick={() => {
-                      if (props.selectedIds.includes(item.id)) {
-                        props.setSelectedIds(
-                          props.selectedIds.filter((id) => id !== item.id)
-                        );
-                      } else {
-                        setEditCustomersData(item);
-                        props.setSelectedIds([...props.selectedIds, item.id]);
+              {props.customers
+                .slice(pagesVisited, pagesVisited + usersPerPage)
+                .map((item) => {
+                  return (
+                    <tr
+                      key={item.id}
+                      onClick={() => {
+                        if (props.selectedIds.includes(item.id)) {
+                          props.setSelectedIds(
+                            props.selectedIds.filter((id) => id !== item.id)
+                          );
+                        } else {
+                          setEditCustomersData(item);
+                          props.setSelectedIds([...props.selectedIds, item.id]);
+                        }
+                      }}
+                      className={
+                        props.selectedIds.includes(item.id)
+                          ? styles.selectedRow
+                          : ""
                       }
-                    }}
-                    className={
-                      props.selectedIds.includes(item.id)
-                        ? styles.selectedRow
-                        : ""
-                    }
-                  >
-                    <td>{item.name}</td>
-                    <td>{item.surname}</td>
-                    <td>{item.address}</td>
-                    <td>{item.age}</td>
-                  </tr>
-                );
-              })}
+                    >
+                      <td>{item.name}</td>
+                      <td>{item.surname}</td>
+                      <td>{item.address}</td>
+                      <td>{item.age}</td>
+                    </tr>
+                  );
+                })}
             </tbody>
           )}
         </table>
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          pageCount={pageCount}
+          onPageChange={changePage}
+          containerClassName={styles.paginationBttns}
+          previousLinkClassName={styles.previousBttn}
+          nextLinkClassName={styles.nextBttn}
+          disabledClassName={styles.paginationDisabled}
+          activeClassName={styles.paginationActive}
+        />
         {openDeleteCustomer && (
           <DeleteCustomers
             deleteRowCustomers={deleteRowCustomers}
             setOpenDeleteCustomer={setOpenDeleteCustomer}
             customers={props.customers}
             setSelectedIds={props.setSelectedIds}
+            notificationsDeleteCustomers={notificationsDeleteCustomers}
+            setNotificationsDeleteCustomers={setNotificationsDeleteCustomers}
+            notificationsDeleteCustomersError={
+              notificationsDeleteCustomersError
+            }
+            setNotificationsDeleteCustomersError={
+              setNotificationsDeleteCustomersError
+            }
           />
         )}
         {openCustomersAdd && (
@@ -174,13 +224,19 @@ const Customers = (props) => {
             fetchCustomers={props.fetchCustomers}
           />
         )}
-        {openCustomersEdit && (
-          <EditCustomers
-            editCustomersData={editCustomersData}
-            closeCustomersModalEdit={setOpenCustomersEdit}
-            fetchCustomers={props.fetchCustomers}
+
+        <Routes>
+          <Route
+            path="/:id"
+            element={
+              <EditCustomers
+                editCustomersData={editCustomersData}
+                fetchCustomers={props.fetchCustomers}
+                setSelectedIds={props.setSelectedIds}
+              />
+            }
           />
-        )}
+        </Routes>
       </div>
     );
   }

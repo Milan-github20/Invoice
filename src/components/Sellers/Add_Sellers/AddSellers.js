@@ -1,19 +1,45 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import styles from "../Add_Sellers/addSellers.module.css";
 import ReactDOM from "react-dom";
 import axios from "axios";
+import {
+  NotificationsAddSubmit,
+  NotificationsCompany,
+  NotificationsCompanyAddress,
+} from "../NotificationsSellers/NotificationsSellers";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
 };
 
 const ModalAddSellers = (props) => {
+  const [notificationsCompany, setNotificationsCompany] = useState(false);
+  const [notificationsCompanyAddress, setNotificationsCompanyAddress] =
+    useState(false);
+  const [notificationsAddSubmit, setNotificationsAddSubmit] = useState(false);
+
   const companyNameRefSellers = useRef();
   const hqAddressRefSellers = useRef();
   const isActiveRefSellers = useRef();
 
   const submitAddSellers = (e) => {
     e.preventDefault();
+
+    if (companyNameRefSellers.current.value.trim() === "") {
+      setNotificationsCompany(true);
+      setTimeout(() => {
+        setNotificationsCompany(false);
+      }, 1500);
+      return;
+    }
+
+    if (hqAddressRefSellers.current.value.trim() === "") {
+      setNotificationsCompanyAddress(true);
+      setTimeout(() => {
+        setNotificationsCompanyAddress(false);
+      }, 1500);
+      return;
+    }
 
     axios
       .post("https://63ce9ae9fdfe2764c726a809.mockapi.io/sellers", {
@@ -22,9 +48,12 @@ const ModalAddSellers = (props) => {
         isActive: isActiveRefSellers.current.value,
       })
       .then(() => {
-        alert("DA");
-        props.closeSellersModal(false);
-        props.fetchSellers();
+        setNotificationsAddSubmit(true);
+        setTimeout(() => {
+          setNotificationsAddSubmit(false);
+          props.closeSellersModal(false);
+          props.fetchSellers();
+        }, 1000);
       });
   };
 
@@ -71,6 +100,24 @@ const ModalAddSellers = (props) => {
           <button className={styles.create}>Create</button>
         </div>
       </form>
+
+      {notificationsCompany && (
+        <NotificationsCompany
+          setNotificationsCompany={setNotificationsCompany}
+        />
+      )}
+
+      {notificationsCompanyAddress && (
+        <NotificationsCompanyAddress
+          setNotificationsCompanyAddress={setNotificationsCompanyAddress}
+        />
+      )}
+
+      {notificationsAddSubmit && (
+        <NotificationsAddSubmit
+          setNotificationsAddSubmit={setNotificationsAddSubmit}
+        />
+      )}
     </div>
   );
 };

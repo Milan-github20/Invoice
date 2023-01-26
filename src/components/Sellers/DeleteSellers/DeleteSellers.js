@@ -1,6 +1,10 @@
 import React from "react";
 import styles from "./deleteSellers.module.css";
 import ReactDOM from "react-dom";
+import {
+  NotificationsDeleteSeller,
+  NotificationsDeleteSellerError,
+} from "../NotificationsSellers/NotificationsSellers";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
@@ -29,6 +33,19 @@ const DeleteSellersModal = (props) => {
           No
         </button>
       </div>
+      {props.notificationsDeleteSellers && (
+        <NotificationsDeleteSeller
+          setNotificationsDeleteSellers={props.setNotificationsDeleteSellers}
+        />
+      )}
+
+      {props.notificationsDeleteSellersError && (
+        <NotificationsDeleteSellerError
+          setNotificationsDeleteSellersError={
+            props.setNotificationsDeleteSellersError
+          }
+        />
+      )}
     </div>
   );
 };
@@ -46,6 +63,14 @@ const DeleteSellers = (props) => {
           setOpenDeleteSeller={props.setOpenDeleteSeller}
           deleteRowSellers={props.deleteRowSellers}
           setSelectedIds={props.setSelectedIds}
+          setNotificationsDeleteSellers={props.setNotificationsDeleteSellers}
+          notificationsDeleteSellers={props.notificationsDeleteSellers}
+          notificationsDeleteSellersError={
+            props.notificationsDeleteSellersError
+          }
+          setNotificationsDeleteSellersError={
+            props.setNotificationsDeleteSellersError
+          }
         ></DeleteSellersModal>,
 
         document.getElementById("modal")

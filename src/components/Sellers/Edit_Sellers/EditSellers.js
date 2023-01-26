@@ -2,12 +2,25 @@ import React, { useState } from "react";
 import styles from "../Edit_Sellers/editSellers.module.css";
 import ReactDOM from "react-dom";
 import axios from "axios";
+import {
+  NotificationsAddSubmit,
+  NotificationsCompany,
+  NotificationsCompanyAddress,
+} from "../NotificationsSellers/NotificationsSellers";
+import { Link, useNavigate } from "react-router-dom";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
 };
 
 const ModalEditSellers = (props) => {
+  const navigate = useNavigate();
+
+  const [notificationsCompany, setNotificationsCompany] = useState(false);
+  const [notificationsCompanyAddress, setNotificationsCompanyAddress] =
+    useState(false);
+  const [notificationsAddSubmit, setNotificationsAddSubmit] = useState(false);
+
   const [company, setCompany] = useState(props.editSellersData.companyName);
   const [companyAddress, setCompanyAddress] = useState(
     props.editSellersData.hqAddress
@@ -16,6 +29,22 @@ const ModalEditSellers = (props) => {
 
   const submitEditSellers = (e) => {
     e.preventDefault();
+
+    if (company === "") {
+      setNotificationsCompany(true);
+      setTimeout(() => {
+        setNotificationsCompany(false);
+      }, 1500);
+      return;
+    }
+
+    if (companyAddress === "") {
+      setNotificationsCompanyAddress(true);
+      setTimeout(() => {
+        setNotificationsCompanyAddress(false);
+      }, 1500);
+      return;
+    }
 
     axios
       .put(
@@ -26,11 +55,14 @@ const ModalEditSellers = (props) => {
           isActive: active,
         }
       )
-      .then(
-        alert("daa"),
-        props.closeSellersModalEdit(false),
-        props.fetchSellers()
-      );
+      .then(() => {
+        setNotificationsAddSubmit(true);
+        setTimeout(() => {
+          setNotificationsAddSubmit(false);
+          navigate("/sellers");
+          props.fetchSellers();
+        }, 1000);
+      });
   };
 
   const handlekeydown = (event) => {
@@ -45,13 +77,15 @@ const ModalEditSellers = (props) => {
       <form onSubmit={submitEditSellers} onKeyDown={handlekeydown}>
         <div className={styles.header}>
           <h2>Edit an seller</h2>
-          <img
-            src="./assets/close.png"
-            alt=""
-            onClick={() => {
-              props.closeSellersModalEdit(false);
-            }}
-          />
+          <Link to={`/sellers`}>
+            <img
+              src="../assets/close.png"
+              alt=""
+              onClick={() => {
+                props.setSelectedIds([]);
+              }}
+            />
+          </Link>
         </div>
 
         <div className={styles.form}>
@@ -75,18 +109,36 @@ const ModalEditSellers = (props) => {
           </select>
         </div>
         <div className={styles.buttons}>
-          <button
-            className={styles.discard}
-            onClick={() => {
-              props.closeSellersModalEdit(false);
-              props.setSelectedIds([]);
-            }}
-          >
-            Discard
-          </button>
+          <Link to={`/sellers`}>
+            <button
+              className={styles.discard}
+              onClick={() => {
+                props.setSelectedIds([]);
+              }}
+            >
+              Discard
+            </button>
+          </Link>
           <button className={styles.save}>Save</button>
         </div>
       </form>
+      {notificationsCompany && (
+        <NotificationsCompany
+          setNotificationsCompany={setNotificationsCompany}
+        />
+      )}
+
+      {notificationsCompanyAddress && (
+        <NotificationsCompanyAddress
+          setNotificationsCompanyAddress={setNotificationsCompanyAddress}
+        />
+      )}
+
+      {notificationsAddSubmit && (
+        <NotificationsAddSubmit
+          setNotificationsAddSubmit={setNotificationsAddSubmit}
+        />
+      )}
     </div>
   );
 };

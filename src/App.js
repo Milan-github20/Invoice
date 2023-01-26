@@ -89,7 +89,7 @@ function App() {
         />
 
         <Route
-          path="/sellers"
+          path="/sellers/*"
           element={
             <Sellers
               sellers={sellers}
@@ -103,7 +103,7 @@ function App() {
           }
         />
         <Route
-          path="/customers"
+          path="/customers/*"
           element={
             <Customers
               customers={customers}

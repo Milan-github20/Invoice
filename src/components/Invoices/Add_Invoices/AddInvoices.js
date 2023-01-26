@@ -6,7 +6,9 @@ import axios from "axios";
 import {
   NotificationsAddSubmit,
   NotificationsAmount,
+  NotificationsCustomer,
   NotificationsDate,
+  NotificationsSeller,
 } from "../NotificationsInvoices/NotificationsInvoices";
 
 const BackDrop = () => {
@@ -16,6 +18,8 @@ const BackDrop = () => {
 const ModalAddInvoices = (props) => {
   const [value, setValue] = useState("");
 
+  const [notificationsSeller, setNotificationsSeller] = useState(false);
+  const [notificationsCustomer, setNotificationsCustomer] = useState(false);
   const [notificationsDate, setNotificationsDate] = useState(false);
   const [notificationsAmount, setNotificationsAmount] = useState(false);
   const [notificationsAddSubmit, setNotificationsAddSubmit] = useState(false);
@@ -43,6 +47,22 @@ const ModalAddInvoices = (props) => {
 
   const submitAddInvoices = (e) => {
     e.preventDefault();
+
+    if (sellerRefAdd.current.value.trim() === "") {
+      setNotificationsSeller(true);
+      setTimeout(() => {
+        setNotificationsSeller(false);
+      }, 1500);
+      return;
+    }
+
+    if (customerRefAdd.current.value.trim() === "") {
+      setNotificationsCustomer(true);
+      setTimeout(() => {
+        setNotificationsCustomer(false);
+      }, 1500);
+      return;
+    }
 
     if (dateRefAdd.current.value.trim() === "") {
       setNotificationsDate(true);
@@ -141,6 +161,18 @@ const ModalAddInvoices = (props) => {
           </button>
           <button className={styles.create}>Create</button>
         </div>
+
+        {notificationsSeller && (
+          <NotificationsSeller
+            setNotificationsSeller={setNotificationsSeller}
+          />
+        )}
+
+        {notificationsCustomer && (
+          <NotificationsCustomer
+            setNotificationsCustomer={setNotificationsCustomer}
+          />
+        )}
 
         {notificationsDate && dateRefAdd.current.value.length === 0 ? (
           <NotificationsDate setNotificationsDate={setNotificationsDate} />

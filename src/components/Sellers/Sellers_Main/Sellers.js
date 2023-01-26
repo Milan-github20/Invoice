@@ -4,10 +4,28 @@ import AddSellers from "../Add_Sellers/AddSellers";
 import EditSellers from "../Edit_Sellers/EditSellers";
 import { ClipLoader } from "react-spinners";
 import DeleteSellers from "../DeleteSellers/DeleteSellers";
+import { Link, Route, Routes } from "react-router-dom";
+import ReactPaginate from "react-paginate";
 
 const Sellers = (props) => {
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const usersPerPage = 5;
+  const pagesVisited = pageNumber * usersPerPage;
+
+  const pageCount = Math.ceil(props.sellers.length / usersPerPage);
+
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
+  const [notificationsDeleteSellers, setNotificationsDeleteSellers] =
+    useState(false);
+
+  const [notificationsDeleteSellersError, setNotificationsDeleteSellersError] =
+    useState(false);
+
   const [openSellersAdd, setOpenSellersAdd] = useState(false);
-  const [openSellersEdit, setOpenSellersEdit] = useState(false);
   const [openDeleteSeller, setOpenDeleteSeller] = useState(false);
 
   const [isDisabled, setIsDisabled] = useState(true);
@@ -54,17 +72,22 @@ const Sellers = (props) => {
             {
               method: "DELETE",
             }
-          ).then(
-            alert("asdasdasd"),
-            props.fetchSellers(),
-            setOpenDeleteSeller(false)
-          );
+          ).then(() => {
+            setNotificationsDeleteSellers(true);
+            setTimeout(() => {
+              setNotificationsDeleteSellers(false);
+              props.fetchSellers();
+              setOpenDeleteSeller(false);
+            }, 1000);
+          });
         }
       }
-
-      alert("Ne moze se obrisati");
-      props.setSelectedIds([]);
-      setOpenDeleteSeller(false);
+      setNotificationsDeleteSellersError(true);
+      setTimeout(() => {
+        setNotificationsDeleteSellersError(false);
+        props.setSelectedIds([]);
+        setOpenDeleteSeller(false);
+      }, 2000);
     }
   };
 
@@ -87,16 +110,20 @@ const Sellers = (props) => {
               >
                 <img src="./assets/plus.png" alt="" />
               </div>
-              <div
+              <Link
+                to={`/sellers/${props.selectedIds}`}
                 className={`${styles.edit} ${
                   isDisabled ? styles.disabled : ""
                 }`}
-                onClick={() => {
-                  setOpenSellersEdit(true);
-                }}
               >
-                <img src="./assets/pen.png" alt="" />
-              </div>
+                <div
+                  className={`${styles.edit} ${
+                    isDisabled ? styles.disabled : ""
+                  }`}
+                >
+                  <img src="./assets/pen.png" alt="" />
+                </div>
+              </Link>
               <div
                 className={`${styles.delete} ${
                   isDisabledDelete ? styles.disabled : ""
@@ -126,50 +153,69 @@ const Sellers = (props) => {
             />
           ) : (
             <tbody className={styles.tbody}>
-              {props.sellers.map((item) => {
-                return (
-                  <tr
-                    key={item.id}
-                    onClick={() => {
-                      if (props.selectedIds.includes(item.id)) {
-                        props.setSelectedIds(
-                          props.selectedIds.filter((id) => id !== item.id)
-                        );
-                      } else {
-                        setEditSellersData(item);
-                        props.setSelectedIds([...props.selectedIds, item.id]);
+              {props.sellers
+                .slice(pagesVisited, pagesVisited + usersPerPage)
+                .map((item) => {
+                  return (
+                    <tr
+                      key={item.id}
+                      onClick={() => {
+                        if (props.selectedIds.includes(item.id)) {
+                          props.setSelectedIds(
+                            props.selectedIds.filter((id) => id !== item.id)
+                          );
+                        } else {
+                          setEditSellersData(item);
+                          props.setSelectedIds([...props.selectedIds, item.id]);
+                        }
+                      }}
+                      className={
+                        props.selectedIds.includes(item.id)
+                          ? styles.selectedRow
+                          : ""
                       }
-                    }}
-                    className={
-                      props.selectedIds.includes(item.id)
-                        ? styles.selectedRow
-                        : ""
-                    }
-                  >
-                    <td>{item.companyName}</td>
-                    <td>{item.hqAddress}</td>
-                    <td
-                      className={`${
-                        item.isActive === "Active"
-                          ? styles.activeGreen
-                          : styles.activeRed
-                      }`}
-                      id={item.id}
                     >
-                      {item.isActive}
-                    </td>
-                  </tr>
-                );
-              })}
+                      <td>{item.companyName}</td>
+                      <td>{item.hqAddress}</td>
+                      <td
+                        className={`${
+                          item.isActive === "Active"
+                            ? styles.activeGreen
+                            : styles.activeRed
+                        }`}
+                        id={item.id}
+                      >
+                        {item.isActive}
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           )}
         </table>
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          pageCount={pageCount}
+          onPageChange={changePage}
+          containerClassName={styles.paginationBttns}
+          previousLinkClassName={styles.previousBttn}
+          nextLinkClassName={styles.nextBttn}
+          disabledClassName={styles.paginationDisabled}
+          activeClassName={styles.paginationActive}
+        />
         {openDeleteSeller && (
           <DeleteSellers
             sellers={props.sellers}
             setOpenDeleteSeller={setOpenDeleteSeller}
             deleteRowSellers={deleteRowSellers}
             setSelectedIds={props.setSelectedIds}
+            notificationsDeleteSellers={notificationsDeleteSellers}
+            setNotificationsDeleteSellers={setNotificationsDeleteSellers}
+            notificationsDeleteSellersError={notificationsDeleteSellersError}
+            setNotificationsDeleteSellersError={
+              setNotificationsDeleteSellersError
+            }
           />
         )}
         {openSellersAdd && (
@@ -178,14 +224,19 @@ const Sellers = (props) => {
             fetchSellers={props.fetchSellers}
           />
         )}
-        {openSellersEdit && (
-          <EditSellers
-            closeSellersModalEdit={setOpenSellersEdit}
-            editSellersData={editSellersData}
-            fetchSellers={props.fetchSellers}
-            setSelectedIds={props.setSelectedIds}
+
+        <Routes>
+          <Route
+            path="/:id"
+            element={
+              <EditSellers
+                editSellersData={editSellersData}
+                fetchSellers={props.fetchSellers}
+                setSelectedIds={props.setSelectedIds}
+              />
+            }
           />
-        )}
+        </Routes>
       </div>
     );
   }

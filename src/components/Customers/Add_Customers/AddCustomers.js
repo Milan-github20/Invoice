@@ -2,12 +2,25 @@ import React, { useRef, useState } from "react";
 import styles from "../Add_Customers/addCustomers.module.css";
 import ReactDOM from "react-dom";
 import axios from "axios";
+import {
+  NotificationsAddress,
+  NotificationsAddSubmit,
+  NotificationsAge,
+  NotificationsName,
+  NotificationsSurname,
+} from "../NotificationsCustomers/NotificationsCustomers";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
 };
 
 const ModalAddCustomers = (props) => {
+  const [notificationsName, setNotificationsName] = useState(false);
+  const [notificationsSurname, setNotificationsSurname] = useState(false);
+  const [notificationsAddress, setNotificationsAddress] = useState(false);
+  const [notificationsAge, setNotificationsAge] = useState(false);
+  const [notificationsAddSubmit, setNotificationsAddSubmit] = useState(false);
+
   const [value, setValue] = useState("");
 
   const nameCustomer = useRef();
@@ -27,6 +40,38 @@ const ModalAddCustomers = (props) => {
   const submitAddCustomer = (e) => {
     e.preventDefault();
 
+    if (nameCustomer.current.value.trim() === "") {
+      setNotificationsName(true);
+      setTimeout(() => {
+        setNotificationsName(false);
+      }, 1500);
+      return;
+    }
+
+    if (surnameCustomer.current.value.trim() === "") {
+      setNotificationsSurname(true);
+      setTimeout(() => {
+        setNotificationsSurname(false);
+      }, 1500);
+      return;
+    }
+
+    if (addressCustomer.current.value.trim() === "") {
+      setNotificationsAddress(true);
+      setTimeout(() => {
+        setNotificationsAddress(false);
+      }, 1500);
+      return;
+    }
+
+    if (ageCustomer.current.value.trim() === "") {
+      setNotificationsAge(true);
+      setTimeout(() => {
+        setNotificationsAge(false);
+      }, 1500);
+      return;
+    }
+
     axios
       .post("https://63ce642b6d27349c2b6c72c5.mockapi.io/customers", {
         name: nameCustomer.current.value,
@@ -35,9 +80,12 @@ const ModalAddCustomers = (props) => {
         age: ageCustomer.current.value,
       })
       .then(() => {
-        alert("DA");
-        props.fetchCustomers();
-        props.closeCustomersModal(false);
+        setNotificationsAddSubmit(true);
+        setTimeout(() => {
+          setNotificationsAddSubmit(false);
+          props.fetchCustomers();
+          props.closeCustomersModal(false);
+        }, 1000);
       });
   };
 
@@ -91,6 +139,33 @@ const ModalAddCustomers = (props) => {
           </button>
         </div>
       </form>
+      {notificationsName && (
+        <NotificationsName setNotificationsName={setNotificationsName} />
+      )}
+
+      {notificationsSurname && (
+        <NotificationsSurname
+          setNotificationsSurname={setNotificationsSurname}
+        />
+      )}
+
+      {notificationsAddress && (
+        <NotificationsAddress
+          setNotificationsAddress={setNotificationsAddress}
+        />
+      )}
+
+      {notificationsAge && ageCustomer.current.value.length === 0 ? (
+        <NotificationsAge setNotificationsAge={setNotificationsAge} />
+      ) : (
+        ""
+      )}
+
+      {notificationsAddSubmit && (
+        <NotificationsAddSubmit
+          setNotificationsAddSubmit={setNotificationsAddSubmit}
+        />
+      )}
     </div>
   );
 };

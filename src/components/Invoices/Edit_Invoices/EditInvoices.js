@@ -5,8 +5,10 @@ import axios from "axios";
 import { format } from "date-fns";
 import {
   NotificationsAmountEdit,
+  NotificationsCustomerEdit,
   NotificationsDateEdit,
   NotificationsEditSubmit,
+  NotificationsSellerEdit,
 } from "../NotificationsInvoices/NotificationsInvoices";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -17,6 +19,9 @@ const BackDrop = () => {
 const ModalEditInvoices = (props) => {
   const navigate = useNavigate();
 
+  const [notificationsSellerEdit, setNotificationsSellerEdit] = useState(false);
+  const [notificationsCustomerEdit, setNotificationsCustomerEdit] =
+    useState(false);
   const [notificationsDateEdit, setNotificationsDateEdit] = useState(false);
   const [notificationsAmountEdit, setNotificationsAmountEdit] = useState(false);
   const [notificationsEditSubmit, setNotificationsEditSubmit] = useState(false);
@@ -44,6 +49,22 @@ const ModalEditInvoices = (props) => {
 
   const submitEditInvoices = (e) => {
     e.preventDefault();
+
+    if (seller === "") {
+      setNotificationsSellerEdit(true);
+      setTimeout(() => {
+        setNotificationsSellerEdit(false);
+      }, 1500);
+      return;
+    }
+
+    if (customer === "") {
+      setNotificationsCustomerEdit(true);
+      setTimeout(() => {
+        setNotificationsCustomerEdit(false);
+      }, 1500);
+      return;
+    }
 
     if (date === "") {
       setNotificationsDateEdit(true);
@@ -75,7 +96,6 @@ const ModalEditInvoices = (props) => {
         setNotificationsEditSubmit(true);
         setTimeout(() => {
           setNotificationsEditSubmit(false);
-          // props.closeInvoicesModalEdit(false);
           navigate("/invoices");
           props.fetchInvoices();
         }, 1000);
@@ -87,13 +107,15 @@ const ModalEditInvoices = (props) => {
       <form onSubmit={submitEditInvoices} onKeyDown={handlekeydown}>
         <div className={styles.header}>
           <h2>Edit an invoice</h2>
-          <img
-            src="./assets/close.png"
-            alt=""
-            onClick={() => {
-              props.closeInvoicesModalEdit(false);
-            }}
-          />
+          <Link to={`/invoices`}>
+            <img
+              src="../assets/close.png"
+              alt=""
+              onClick={() => {
+                props.setSelectedIds([]);
+              }}
+            />
+          </Link>
         </div>
 
         <div className={styles.form}>
@@ -152,6 +174,22 @@ const ModalEditInvoices = (props) => {
           <button className={styles.save}>Save</button>
         </div>
       </form>
+
+      {notificationsSellerEdit && seller.length === 0 ? (
+        <NotificationsSellerEdit
+          setNotificationsSellerEdit={setNotificationsSellerEdit}
+        />
+      ) : (
+        ""
+      )}
+
+      {notificationsCustomerEdit && customer.length === 0 ? (
+        <NotificationsCustomerEdit
+          setNotificationsCustomerEdit={setNotificationsCustomerEdit}
+        />
+      ) : (
+        ""
+      )}
 
       {notificationsDateEdit && date.length === 0 ? (
         <NotificationsDateEdit
