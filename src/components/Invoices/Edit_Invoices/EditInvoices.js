@@ -8,12 +8,15 @@ import {
   NotificationsDateEdit,
   NotificationsEditSubmit,
 } from "../NotificationsInvoices/NotificationsInvoices";
+import { useParams } from "react-router-dom";
 
 const BackDrop = () => {
   return <div className={styles.backdrop}></div>;
 };
 
 const ModalEditInvoices = (props) => {
+  const params = useParams();
+
   const [notificationsDateEdit, setNotificationsDateEdit] = useState(false);
   const [notificationsAmountEdit, setNotificationsAmountEdit] = useState(false);
   const [notificationsEditSubmit, setNotificationsEditSubmit] = useState(false);
@@ -29,6 +32,8 @@ const ModalEditInvoices = (props) => {
       submitEditInvoices(event);
     }
   };
+
+  console.log(params.id);
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
@@ -139,6 +144,7 @@ const ModalEditInvoices = (props) => {
             className={styles.discard}
             onClick={() => {
               props.closeInvoicesModalEdit(false);
+              props.setSelectedIds([]);
             }}
           >
             Discard
@@ -184,6 +190,7 @@ const EditInvoices = (props) => {
           editInvoicesData={props.editInvoicesData}
           sellers={props.sellers}
           customers={props.customers}
+          setSelectedIds={props.setSelectedIds}
         ></ModalEditInvoices>,
         document.getElementById("modal")
       )}

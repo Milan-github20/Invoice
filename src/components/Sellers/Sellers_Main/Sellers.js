@@ -183,6 +183,7 @@ const Sellers = (props) => {
             closeSellersModalEdit={setOpenSellersEdit}
             editSellersData={editSellersData}
             fetchSellers={props.fetchSellers}
+            setSelectedIds={props.setSelectedIds}
           />
         )}
       </div>

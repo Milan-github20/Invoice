@@ -79,6 +79,7 @@ const ModalEditSellers = (props) => {
             className={styles.discard}
             onClick={() => {
               props.closeSellersModalEdit(false);
+              props.setSelectedIds([]);
             }}
           >
             Discard
@@ -104,6 +105,7 @@ const EditSellers = (props) => {
           fetchSellers={props.fetchSellers}
           selectedIds={props.selectedIds}
           isDisabled={props.isDisabled}
+          setSelectedIds={props.setSelectedIds}
         ></ModalEditSellers>,
         document.getElementById("modal")
       )}

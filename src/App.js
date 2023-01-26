@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Outlet, Route, Routes, useParams } from "react-router-dom";
 import Invoices from "./components/Invoices/Invoices_Main/Invoices";
 import Sellers from "./components/Sellers/Sellers_Main/Sellers";
 import Customers from "./components/Customers/Customers_Main/Customers";
 import Header from "./components/Header/Header";
+import EditInvoices from "./components/Invoices/Edit_Invoices/EditInvoices";
 
 function App() {
+  const params = useParams();
+
   const [customers, setCustomers] = useState([]);
   const [sellers, setSellers] = useState([]);
   const [error, setError] = useState(null);
@@ -87,6 +90,8 @@ function App() {
             />
           }
         />
+        {/*  <Route path="/invoices/:id" element={<EditInvoices />} /> */}
+
         <Route
           path="/sellers"
           element={
