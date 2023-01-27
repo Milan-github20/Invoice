@@ -63,18 +63,12 @@
   margin-top: 15px;
 }
 
-.form select {
-  width: 100%;
-  height: 35px;
-  border: 2px solid #cdcdcd;
-  border-radius: 5px;
-}
-
 .form input {
   width: 97%;
   height: 35px;
   border: 2px solid #cdcdcd;
   border-radius: 5px;
+  font-size: 14px;
 }
 
 .buttons {

@@ -68,6 +68,11 @@
   height: 35px;
   border: 2px solid #cdcdcd;
   border-radius: 5px;
+  font-size: 14px;
+}
+
+.form select option {
+  font-size: 14px;
 }
 
 .form input {
@@ -75,6 +80,7 @@
   height: 35px;
   border: 2px solid #cdcdcd;
   border-radius: 5px;
+  font-size: 14px;
 }
 
 .buttons {
